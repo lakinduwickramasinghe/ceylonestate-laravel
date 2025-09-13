@@ -64,4 +64,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function propertyAds(){
+        return $this->hasMany(PropertyAd::class, 'user_id', 'id');
+    }
+
+    public function notifications(){
+        return $this->hasMany(Notification::class, 'user_id', 'id');
+    }
+    
+    public function payments(){
+        return $this->hasMany(Payment::class, 'user_id', 'id');
+    }
+
+    public function messages(){
+        return $this->hasMany(Message::class, 'user_id', 'id');
+    }
+    
+    public function sentMessages(){
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages(){
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
 }

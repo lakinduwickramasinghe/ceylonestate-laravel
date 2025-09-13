@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('property_ads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('property_type', ['residential','commercial','land','industrial']);
