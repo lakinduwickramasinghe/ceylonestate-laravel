@@ -10,3 +10,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('property', PropertyAdController::class);
+Route::get('property/member/{id}',[PropertyAdController::class,'member_property'])->name('member.properties');
+Route::post('/property/create', [PropertyAdController::class, 'store']);

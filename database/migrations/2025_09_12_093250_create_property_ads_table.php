@@ -13,8 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('property_type', ['residential','commercial','land','industrial']);
-            $table->enum('listing_type', ['sale','rent']);
+            $table->enum('property_type', ['residential','commercial','land','industrial','rental']);
             $table->decimal('price', 12, 2)->nullable();
             $table->enum('status', ['available','sold','rented','inactive'])->default('available');
             $table->string('address_line_1');

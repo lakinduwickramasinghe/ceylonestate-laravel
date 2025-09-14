@@ -7,17 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class PropertyAd extends Model
 {
     protected $fillable = [
-        'title','description','property_type','listing_type','price','status',
+        'title','description','property_type','price','status',
         'address_line_1','address_line_2','city','province','postal_code',
-        'latitude','longitude','user_id'
-    ];
+        'latitude','longitude','user_id' ];
 
     public function user(){
         return $this->belongsTo(User::class,'user_id','id');
-    }
-
-    public function residential(){
-        return $this->hasOne(ResidentialProperty::class, 'property_id');
     }
 
     public function commercial(){
@@ -31,9 +26,12 @@ class PropertyAd extends Model
     public function industrial(){
         return $this->hasOne(IndustrialProperty::class, 'property_id');
     }
+    public function residential(){
+        return $this->hasOne(ResidentialProperty::class, 'property_id');
+    }
 
-    public function rental(){
-        return $this->hasOne(RentalProperty::class, 'property_id');
+    public function images(){
+        return $this->hasMany(PropertyImage::class, 'property_id');
     }
 
 }

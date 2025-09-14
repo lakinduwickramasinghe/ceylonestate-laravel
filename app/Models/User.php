@@ -26,9 +26,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'role',
+        'profile_photo_path',
     ];
 
     /**
@@ -89,4 +93,14 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isMember()
+    {
+        return $this->role === 'member';
+    }
 }
