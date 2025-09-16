@@ -17,11 +17,3 @@ Route::post('/property/create', [PropertyAdController::class, 'store']);
 
 Route::apiResource('user', UserController::class);
 
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/chat', [ChatController::class, 'showChatPage'])->name('chat.page');
-    Route::get('/chat/{userId}', [ChatController::class, 'openChat'])->name('chat.open');
-    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
-    Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
-    Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
-});

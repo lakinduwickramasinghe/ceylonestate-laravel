@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\PropertyAdController;
 use App\Http\Controllers\UserController;
 use App\Models\PropertyAd;
@@ -54,3 +55,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('admin/user/{id}',[UserController::class,'show'])->name('admin.user.show');
 });
 
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/chat', [ChatController::class, 'showChatPage'])->name('chat.page');
+    Route::get('/chat/{userId}', [ChatController::class, 'openChat'])->name('chat.open');
+    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
+    Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
+});
