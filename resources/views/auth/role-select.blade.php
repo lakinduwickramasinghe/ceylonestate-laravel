@@ -10,6 +10,7 @@
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
 
+    
     <div class="bg-white rounded-3xl shadow-2xl p-12 max-w-xl w-full text-center">
         <h1 class="text-4xl font-extrabold text-gray-800 mb-4">Welcome Back!</h1>
         <p class="text-gray-500 mb-10">Select your role to login</p>
@@ -25,10 +26,10 @@
 
             <!-- Member Login Card -->
             <a href="{{route('login.member')}}">
-                <div class="flex flex-col items-center justify-center bg-green-500 hover:bg-green-600 text-white py-5 rounded-xl shadow-lg transform transition-transform hover:scale-105 cursor-pointer">
-                    <i class="fas fa-user-friends text-5xl mb-3"></i>
-                    <span class="font-semibold text-lg">Member Login</span>
-                </div>
+            <div class="flex flex-col items-center justify-center bg-green-500 hover:bg-green-600 text-white py-5 rounded-xl shadow-lg transform transition-transform hover:scale-105 cursor-pointer">
+                <i class="fas fa-user-friends text-5xl mb-3"></i>
+                <span class="font-semibold text-lg">Member Login</span>
+            </div>
             </a>
         </div>
 

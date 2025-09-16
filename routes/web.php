@@ -18,9 +18,6 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/admindashboard', function () {
-    return view('dashboards.admin');
-})->middleware('auth')->name('admin-db');
 
 Route::get('/memberdashboard', function () {
     return view('dashboards.member');
@@ -28,5 +25,25 @@ Route::get('/memberdashboard', function () {
 
 
 Route::resource('property', PropertyAdController::class);
+
+
+//admin routes
 Route::get('admin/properties',[PropertyAdController::class,'admin_index'])->name('admin.property.index');
-Route::get('admin/propery/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+Route::get('admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+Route::get('/admindashboard', function () {
+    return view('dashboards.admin');
+})->name('admin-db');
+
+
+Route::get('/test', function () {
+    return view('auth.role-select');
+})->name('about');
+
+
+Route::get('login/admin', function () {
+    return view('auth.admin-login');
+})->name('login.admin');
+
+Route::get('login/member', function () {
+    return view('auth.member-login');
+})->name('login.member');

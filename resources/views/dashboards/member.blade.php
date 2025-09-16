@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.member')
 @section('title','Member Dashboard - Ceylon Estate')
 
 @section('content')
