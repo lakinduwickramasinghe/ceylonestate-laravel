@@ -88,76 +88,56 @@
 
 <!-- Side Nav -->
 <nav class="fixed left-0 top-16 w-56 h-[calc(100vh-64px)] bg-white border-r border-gray-200 overflow-y-auto z-40 shadow-sm">
-    <div class="flex flex-col">
-        @if (auth()->user()->role === 'admin')
-            <a href="{{route('admin-db')}}">
-                <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                    <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboards
-                </div>
-            </a>
-        @endif
-        @if (auth()->user()->role === 'member')
-            <a href="{{route('member-db')}}">
-                <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                    <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboards
-                </div>  
-            </a>
-        @endif
+    <div class="flex flex-col flex-1">
 
-        <!-- Reports -->
-        <div class="sidebar-item flex flex-col border-b border-gray-100 cursor-pointer">
-            <div class="flex items-center px-5 py-3 text-gray-700">
-                <i class="fas fa-chart-bar text-gray-500 mr-3"></i> Property Ads
-                <i class="fas fa-chevron-down ml-auto text-gray-400 transition-transform duration-200"></i>
-            </div>
-            <div class="sub-nav flex flex-col text-gray-700 text-sm mx-2 my-1 overflow-hidden">
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{route('admin.property.index')}}"> <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Manage Listings</span></div> </a>
-                @endif
-                @if (auth()->user()->role === 'member')
-                    <a href="{{route('property.index')}}"> <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>My Listings</span></div> </a><div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Leads Report</span></div> 
-                @endif
-                
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Project Report</span></div>
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Timesheets Report</span></div>
-            </div>
-        </div>
-        
-        <!-- Applications -->
-        <div class="sidebar-item flex flex-col border-b border-gray-100 cursor-pointer">
-            <div class="flex items-center px-5 py-3 text-gray-700">
-                <i class="fas fa-th-large text-gray-500 mr-3"></i> Applications
-            </div>
-            <div class="sub-nav flex flex-col text-gray-600 text-sm mx-2 my-1 overflow-hidden">
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Proposal</span></div>
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-file-alt text-gray-400"></i><span>Payment</span></div>
-            </div>
-        </div>
-        <!-- Customers -->
-        <div class="sidebar-item flex flex-col border-b border-gray-100 cursor-pointer">
-            <div class="flex items-center px-5 py-3 text-gray-700">
-                <i class="fas fa-users text-gray-500 mr-3"></i> Customers
-            </div>
-            <div class="sub-nav flex flex-col text-gray-600 text-sm mx-2 my-1 overflow-hidden">
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-user text-gray-400"></i><span>Leads</span></div>
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-user text-gray-400"></i><span>Projects</span></div>
-            </div>
-        </div>
-        <!-- Settings -->
-        <div class="sidebar-item flex flex-col border-b border-gray-100 cursor-pointer">
-            <div class="flex items-center px-5 py-3 text-gray-700">
-                <i class="fas fa-cog text-gray-500 mr-3"></i> Settings
-            </div>
-            <div class="sub-nav flex flex-col text-gray-600 text-sm mx-2 my-1 overflow-hidden">
-                <div class="pl-10 py-2 hover:bg-gray-100 rounded-md flex items-center space-x-2"><i class="fas fa-lock text-gray-400"></i><span>Authentication</span></div>
-            </div>
-        </div>
-        <!-- Help Center -->
-        <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-            <i class="fas fa-question-circle text-gray-500 mr-3"></i> Help Center
-        </div>
+        <!-- Dashboard -->
+        <a href="{{ route('member-db') }}">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboard
+            </div>  
+        </a>
+
+        <!-- My Property Ads -->
+        <a href="{{ route('property.index') }}">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-building text-gray-500 mr-3"></i> My Property Ads
+            </div>  
+        </a>
+
+        <!-- My Reviews -->
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-star text-gray-500 mr-3"></i> My Reviews
+            </div>  
+        </a>
+
+        <!-- Chat -->
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-comments text-gray-500 mr-3"></i> Chat
+            </div>  
+        </a>
+
+        <!-- My Payments -->
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-credit-card text-gray-500 mr-3"></i> My Payments
+            </div>  
+        </a>
+
+        <!-- Logout -->
+        <a href="{{ route('logout') }}" 
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+           class="mt-auto px-5 py-3 flex items-center text-red-600 hover:bg-red-100 cursor-pointer border-t border-red-300">
+            <i class="fas fa-sign-out-alt text-red-600 mr-3"></i>
+            <span class="font-medium">Logout</span>
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+            @csrf
+        </form>
     </div>
 </nav>
+
 
 <!-- Main Content -->
 <main class="ml-56 mt-16 p-6 bg-gray-50 min-h-[calc(100vh-64px)]">

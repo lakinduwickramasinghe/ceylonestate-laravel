@@ -9,6 +9,9 @@
 <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
+/* Overlapping avatars */
+.overlap-avatars > img { margin-left: -0.5rem; }
+.overlap-avatars > .count { margin-left: -0.5rem; }
 /* Theme switch */
 .theme-switch { position: relative; width: 48px; height: 24px; border-radius: 9999px; cursor: pointer; background-color: #e2e8f0; padding: 2px; display: flex; align-items: center; justify-content: space-between; }
 .theme-switch input { display: none; }
@@ -25,19 +28,18 @@
 /* Sub-nav transition */
 .sub-nav { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; }
 .sub-nav.show { max-height: 1000px; }
-/* Profile dropdown card */
-#profile-dropdown { display: none; position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 280px; background-color: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 5px 25px rgba(0,0,0,0.2); z-index: 60; padding-bottom: 1rem; }
+/* Profile dropdown */
+#profile-dropdown { display: none; position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 240px; background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 60; }
 .dark-mode #profile-dropdown { background-color: #2d3748; border-color: #4a5568; }
-#profile-dropdown .profile-card { display: flex; flex-direction: column; align-items: center; padding: 1rem; gap: 0.5rem; }
-#profile-dropdown .profile-card img { width: 80px; height: 80px; border-radius: 9999px; object-fit: cover; }
-#profile-dropdown .profile-card p.name { font-weight: 600; font-size: 1rem; color: #1a202c; margin: 0; text-align: center; }
-.dark-mode #profile-dropdown .profile-card p.name { color: #e2e8f0; }
-#profile-dropdown .profile-card p.email { font-size: 0.875rem; color: #718096; margin: 0; text-align: center; }
-.dark-mode #profile-dropdown .profile-card p.email { color: #cbd5e0; }
-#profile-dropdown .profile-card p.role { font-size: 0.8rem; color: #4b5563; margin: 0; text-align: center; }
-.dark-mode #profile-dropdown .profile-card p.role { color: #a0aec0; }
-#profile-dropdown .profile-card a.profile-btn { margin-top: 0.75rem; display: block; width: 90%; text-align: center; padding: 0.5rem 0; font-weight: 500; color: white; background-color: #1b5d38; border-radius: 0.375rem; text-decoration: none; }
-#profile-dropdown .profile-card a.profile-btn:hover { background-color: #14532d; }
+#profile-dropdown p { margin: 0; }
+#profile-dropdown .user-info { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+.dark-mode #profile-dropdown .user-info { border-bottom-color: #4a5568; }
+#profile-dropdown .user-info p.name { font-weight: 600; color: #1a202c; }
+.dark-mode #profile-dropdown .user-info p.name { color: #e2e8f0; }
+#profile-dropdown .user-info p.email { font-size: 0.875rem; color: #718096; }
+.dark-mode #profile-dropdown .user-info p.email { color: #cbd5e0; }
+#profile-dropdown .profile-btn { display: block; margin: 0.5rem 1rem 1rem 1rem; text-align: center; padding: 0.5rem 0; background-color: #1b5d38; color: white; border-radius: 0.375rem; font-weight: 500; text-decoration: none; }
+#profile-dropdown .profile-btn:hover { background-color: #14532d; }
 </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
@@ -69,7 +71,7 @@
             <span class="text-gray-500 text-lg cursor-pointer hover:text-gray-700"><i class="fas fa-bell"></i></span>
             <div class="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-medium">2</div>
         </div>
-        <!-- Theme Toggle -->
+        <!-- Theme Toggle with Icons -->
         <label class="theme-switch" id="theme-switch">
             <input type="checkbox">
             <div class="knob flex items-center justify-center">
@@ -78,27 +80,23 @@
             <i class="fas fa-sun text-yellow-400 ml-1"></i>
             <i class="fas fa-moon text-gray-500 mr-1"></i>
         </label>
-
         <!-- Profile Image -->
         @if(Auth::user()->profile_photo_path)
-            <img id="profile-btn" class="w-10 h-10 rounded-full cursor-pointer object-cover" 
+            <img id="profile-btn" class="w-8 h-8 rounded-full cursor-pointer object-cover" 
                 src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" 
                 alt="User">
         @else
-            <img id="profile-btn" class="w-10 h-10 rounded-full cursor-pointer object-cover" 
+            <img id="profile-btn" class="w-8 h-8 rounded-full cursor-pointer object-cover" 
                 src="{{ Auth::user()->profile_photo_url }}" 
                 alt="User">
         @endif
-
         <!-- Profile Dropdown -->
         <div id="profile-dropdown">
-            <div class="profile-card">
-                <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : Auth::user()->profile_photo_url }}" alt="User">
+            <div class="user-info">
                 <p class="name">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</p>
                 <p class="email">{{ Auth::user()->email }}</p>
-                <p class="role">{{ ucfirst(Auth::user()->role) }}</p>
-                <a href="" class="profile-btn">View Profile</a>
             </div>
+            <a href="" class="profile-btn">View Profile</a>
         </div>
     </div>
 </header>
@@ -106,21 +104,41 @@
 <!-- Side Nav -->
 <nav class="fixed left-0 top-16 w-56 h-[calc(100vh-64px)] bg-white border-r border-gray-200 overflow-y-auto z-40 shadow-sm flex flex-col">
     <div class="flex flex-col flex-1">
-        @if (auth()->user()->role === 'admin')
-            <a href="{{route('admin-db')}}">
-                <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                    <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboards
-                </div>
-            </a>
-        @endif
-        @if (auth()->user()->role === 'member')
-            <a href="{{route('member-db')}}">
-                <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                    <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboards
-                </div>  
-            </a>
-        @endif
-        <!-- Submenus omitted for brevity -->
+        <a href="{{ route('admin-db') }}">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-tachometer-alt text-gray-500 mr-3"></i> Dashboard
+            </div>
+        </a>
+
+        <a href="{{ route('admin.property.index') }}">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-building text-gray-500 mr-3"></i> Manage Properties
+            </div>
+        </a>
+
+        <a href="{{route('admin.user.index')}}">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-users text-gray-500 mr-3"></i> Users
+            </div>
+        </a>
+
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-star text-gray-500 mr-3"></i> Reviews
+            </div>
+        </a>
+
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-comments text-gray-500 mr-3"></i> Chat
+            </div>
+        </a>
+
+        <a href="">
+            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
+                <i class="fas fa-credit-card text-gray-500 mr-3"></i> Payments
+            </div>
+        </a>
 
         <!-- Logout Button -->
         <a href="{{ route('logout') }}" 
@@ -134,6 +152,7 @@
         </form>
     </div>
 </nav>
+
 
 <!-- Main Content -->
 <main class="ml-56 mt-16 p-6 bg-gray-50 min-h-[calc(100vh-64px)]">
@@ -153,7 +172,7 @@ document.querySelectorAll('.sidebar-item.flex-col > .flex').forEach(item => {
     });
 });
 
-// Theme switch
+// Theme switch with icons
 const themeSwitch = document.getElementById('theme-switch');
 const input = themeSwitch.querySelector('input');
 const knob = themeSwitch.querySelector('.knob');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PropertyAd;
 use Illuminate\Http\Request;
 
 class PropertyAdController extends Controller
@@ -11,52 +12,54 @@ class PropertyAdController extends Controller
         return view('property.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('property.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         return view('property.show',compact('id'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         return view('property.edit',compact('id'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $propertyAd = PropertyAd::with(['commercial','land','industrial','residential','images'])->find($id);
+        if ($propertyAd) {
+            if($propertyAd->images())
+                $propertyAd->images()->delete();
+            if ($propertyAd->commercial) {
+                $propertyAd->commercial->delete();
+            }
+            if ($propertyAd->land) {
+                $propertyAd->land->delete();
+            }
+            if ($propertyAd->industrial) {
+                $propertyAd->industrial->delete();
+            }
+            if ($propertyAd->residential) {
+                $propertyAd->residential->delete();
+            }
+            $propertyAd->delete();
+            return redirect()->route('property.index')->with('success', 'Property Ad deleted successfully.');
+        } else {
+            return redirect()->route('property.index')->with('error', 'Property Ad not found.');
+        }
     }
     public function admin_index(){
         return view('property.admin_index');

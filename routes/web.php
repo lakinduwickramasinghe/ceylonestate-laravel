@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PropertyAdController;
+use App\Http\Controllers\UserController;
 use App\Models\PropertyAd;
 use Illuminate\Support\Facades\Route;
 
@@ -14,31 +15,24 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $role = auth()->user()->role;
+        if($role === 'admin'){
+            return redirect()->route('admin-db');
+        }else{
+            return redirect()->route('member-db');
+        }
     })->name('dashboard');
 });
-
 
 Route::get('/memberdashboard', function () {
     return view('dashboards.member');
 })->middleware('auth')->name('member-db');
 
-
 Route::resource('property', PropertyAdController::class);
-
-
-//admin routes
-Route::get('admin/properties',[PropertyAdController::class,'admin_index'])->name('admin.property.index');
-Route::get('admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
-Route::get('/admindashboard', function () {
-    return view('dashboards.admin');
-})->name('admin-db');
-
 
 Route::get('/test', function () {
     return view('auth.role-select');
 })->name('about');
-
 
 Route::get('login/admin', function () {
     return view('auth.admin-login');
@@ -47,3 +41,16 @@ Route::get('login/admin', function () {
 Route::get('login/member', function () {
     return view('auth.member-login');
 })->name('login.member');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('admin/property',[PropertyAdController::class,'admin_index'])->name('admin.property.index');
+    Route::get('admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+    Route::get('/admindashboard', function () {
+        return view('dashboards.admin');
+    })->name('admin-db');
+
+    Route::get('admin/user',[UserController::class,'index'])->name('admin.user.index');
+    Route::get('admin/user/{id}',[UserController::class,'show'])->name('admin.user.show');
+});
+

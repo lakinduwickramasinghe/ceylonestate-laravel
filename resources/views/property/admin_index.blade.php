@@ -88,17 +88,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function deleteProperty(id) {
     if (!confirm('Are you sure you want to delete this property?')) return;
-    axios.delete(`/admin/properties/${id}`, {
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-    })
-    .then(() => {
-        alert('Property deleted successfully.');
-        location.reload();
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Failed to delete property.');
-    });
+
+    axios.delete(`/api/property/${id}`)
+        .then(() => {
+            alert('Property deleted successfully.');
+            location.reload();
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Failed to delete property.');
+        });
 }
+
 </script>
 @endsection
