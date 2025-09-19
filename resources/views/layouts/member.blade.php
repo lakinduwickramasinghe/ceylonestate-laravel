@@ -44,13 +44,13 @@
     </a>
 
     <div class="flex-1 ml-10 text-gray-600 text-sm">
-        <nav class="flex space-x-2">
+        {{-- <nav class="flex space-x-2">
             <span>Home</span>
             <i class="fas fa-chevron-right text-xs self-center"></i>
             <span>Properties</span>
             <i class="fas fa-chevron-right text-xs self-center"></i>
             <span>Leads</span>
-        </nav>
+        </nav> --}}
     </div>
 
     <input type="text" placeholder="Search properties..." class="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-700 focus:outline-none focus:border-[#1b5d38] focus:ring-1 focus:ring-[#1b5d38] w-64">

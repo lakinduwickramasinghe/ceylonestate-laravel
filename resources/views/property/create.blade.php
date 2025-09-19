@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.member')
 @section('title','Create Property Ad - Admin Panel')
 @section('content')
 

@@ -20,7 +20,7 @@
             <h1 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">Find Your Dream Property</h1>
             <p class="text-lg md:text-2xl mb-6 drop-shadow-md">Explore the best properties for sale across Sri Lanka.</p>
             <div class="flex justify-center">
-                <a href="#properties" class="bg-lime-400 hover:bg-lime-500 text-gray-900 px-6 py-3 rounded-md font-semibold transition">
+                <a href="{{ route('properties') }}" class="bg-lime-400 hover:bg-lime-500 text-gray-900 px-6 py-3 rounded-md font-semibold transition">
                     Browse Properties
                 </a>
             </div>

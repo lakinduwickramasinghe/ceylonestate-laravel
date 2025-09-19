@@ -65,6 +65,6 @@ class PropertyAdController extends Controller
         return view('property.admin_index');
     }
     public function admin_view(){
-        return view('property.admin_view');
+        return view('property.admin_show');
     }
 }

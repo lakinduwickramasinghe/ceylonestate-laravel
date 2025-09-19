@@ -72,3 +72,5 @@ Route::get('aboutus', function () {
 Route::get('properties', function () {
     return view('home.properties');
 })->name('properties');
+
+Route::get('/admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
