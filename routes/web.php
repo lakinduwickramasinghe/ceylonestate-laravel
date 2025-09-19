@@ -64,3 +64,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
     Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
 });
+
+Route::get('aboutus', function () {
+    return view('home.aboutus');
+})->name('aboutus');
+
+Route::get('properties', function () {
+    return view('home.properties');
+})->name('properties');

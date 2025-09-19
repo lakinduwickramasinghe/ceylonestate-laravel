@@ -1,185 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ceylon Estate Homepage</title>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceylon Estate - Home</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
 </head>
-<body class="flex flex-col min-h-screen bg-gray-100">
+<body class="bg-gray-50 font-sans">
 
-<!-- Hero Section -->
-<section class="py-12 sm:py-16 text-center relative">
-    <div class="absolute inset-0 z-0" style="background-size: cover; background-position: center;">
-        <div class="absolute inset-0 bg-black opacity-40"></div>
-    </div>
-    <div class="container mx-auto px-4 relative z-10">
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4 text-white">FIND YOUR DREAM HOME</h1>
-        <p class="text-base sm:text-lg mb-6 sm:mb-8 text-white">Now you can save yourself the stress, time, and hidden costs, with hundreds of homes for you to choose from.</p>
-        <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div class="relative rounded-lg overflow-hidden shadow-lg group">
-                <div class="absolute inset-0 z-0" style="background-size: cover; background-position: center;">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#1A5C38]/80 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                </div>
-                <div class="relative z-10 p-4 sm:p-6 flex flex-col items-center justify-center h-40 sm:h-48">
-                    <h3 class="text-lg sm:text-xl font-bold text-white mb-4">Buy Your Dream Home</h3>
-                    <a href="{{ url('forsale') }}" class="white-button">Explore For Sale</a>
-                </div>
-            </div>
-            <div class="relative rounded-lg overflow-hidden shadow-lg group">
-                <div class="absolute inset-0 z-0" style="background-size: cover; background-position: center;">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#1A5C38]/80 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                </div>
-                <div class="relative z-10 p-4 sm:p-6 flex flex-col items-center justify-center h-40 sm:h-48">
-                    <h3 class="text-lg sm:text-xl font-bold text-white mb-4">Rent Your Perfect Space</h3>
-                    <a href="{{ url('forrent') }}" class="white-button">Explore For Rent</a>
-                </div>
+    @include('layouts.header')
+
+    <!-- Hero Section -->
+    <section class="h-[600px] flex items-center" 
+            style="background-image: url('{{ asset('./images/hero1.jpeg') }}'); background-size: cover; background-position: center;">
+        <div class="max-w-7xl mx-auto px-6 text-white text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">Find Your Dream Property</h1>
+            <p class="text-lg md:text-2xl mb-6 drop-shadow-md">Explore the best properties for sale across Sri Lanka.</p>
+            <div class="flex justify-center">
+                <a href="#properties" class="bg-lime-400 hover:bg-lime-500 text-gray-900 px-6 py-3 rounded-md font-semibold transition">
+                    Browse Properties
+                </a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Properties For Sale -->
-<section class="py-12 sm:py-16">
-    <div class="container mx-auto px-4 max-w-6xl">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-[#1A5C38]">Properties For Sale</h2>
-        <div id="forsale" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
-    </div>
-</section>
+    <!-- Properties Section -->
+    <section id="properties" class="py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-10 text-center">Featured Properties</h2>
+            
+            <!-- Properties Grid -->
+            <div id="properties-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Properties will be injected here by JS -->
+            </div>
 
-<!-- Properties For Rent -->
-<section class="py-12 sm:py-16">
-    <div class="container mx-auto px-4 max-w-6xl">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-[#1A5C38]">Properties For Rent</h2>
-        <div id="forrent" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
-    </div>
-</section>
+        </div>
+    </section>
 
-<!-- Contact Section -->
-<section class="py-16 sm:py-20 relative overflow-hidden">
-    <div class="absolute inset-0 z-0" style="background-size: cover; background-position: center;">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80"></div>
-    </div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <div class="text-white text-center lg:text-left animate-fade-in" style="animation-delay: 0.2s;">
-                <h3 class="text-3xl sm:text-4xl font-extrabold mb-6 sm:mb-8 drop-shadow-lg">Need to Talk?</h3>
-                <p class="text-xl sm:text-2xl mb-4 sm:mb-6 drop-shadow">We’re Here to Help You</p>
-                <div class="space-y-3 sm:space-y-4">
-                    <p class="text-base sm:text-lg">Contact Us:</p>
-                    <p class="text-base sm:text-lg">No 645, 9 Kings Street, Matale, Sri Lanka</p>
-                    <p class="text-base sm:text-lg">Phone: <a href="tel:+94645923215" class="underline hover:text-gray-300">645 923 215</a></p>
-                    <p class="text-base sm:text-lg">Email: <a href="mailto:help@ceylonestate.lk" class="underline hover:text-gray-300">help@ceylonestate.lk</a></p>
-                    <p class="text-base sm:text-lg mt-4 sm:mt-6">Social Media:</p>
-                    <p class="text-base sm:text-lg">ceylonestate.matale</p>
+    <!-- Contact Form Section -->
+    <section id="contact" class="py-20 relative" 
+            style="background-image: url('{{ asset('./images/hero4.jpg') }}'); background-size: cover; background-position: center;">
+        
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <div class="relative max-w-3xl mx-auto px-6 text-center text-white">
+            <h2 class="text-4xl font-bold mb-3">Get in Touch with Us</h2>
+            <p class="text-lg mb-10">Need to talk? We’re here to answer your questions and help you find the right property.</p>
+            
+            <form action="" method="POST" 
+                class="bg-white bg-opacity-90 shadow-md rounded-lg p-8 space-y-4 text-left">
+                @csrf
+                <div>
+                    <label for="name" class="block text-gray-800 font-medium mb-1">Name</label>
+                    <input type="text" name="name" id="name" required 
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#1b5d38] focus:ring-1 focus:ring-[#1b5d38]">
                 </div>
-            </div>
+                <div>
+                    <label for="email" class="block text-gray-800 font-medium mb-1">Email</label>
+                    <input type="email" name="email" id="email" required 
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#1b5d38] focus:ring-1 focus:ring-[#1b5d38]">
+                </div>
+                <div>
+                    <label for="message" class="block text-gray-800 font-medium mb-1">Message</label>
+                    <textarea name="message" id="message" rows="5" required 
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#1b5d38] focus:ring-1 focus:ring-[#1b5d38]"></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="bg-[#1b5d38] hover:bg-green-700 text-white px-6 py-2 rounded-md font-semibold transition">
+                        Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-            <!-- Contact Form -->
-            <div class="bg-white/80 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-md mx-auto lg:mx-0 animate-fade-in" style="animation-delay: 0.4s;">
-                <h3 class="text-xl sm:text-2xl font-bold text-[#1A5C38] mb-4 sm:mb-6">Got a Question?</h3>
-                <form action="" method="POST" class="space-y-4 sm:space-y-6">
-                    <div class="relative mb-4 sm:mb-6">
-                        <input type="email" name="email" placeholder="Your email..." required class="w-full p-3 sm:p-4 pl-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A5C38] placeholder-gray-500 transition-all duration-300 text-sm sm:text-base">
-                    </div>
-                    <div class="relative mb-4 sm:mb-6">
-                        <textarea name="question" placeholder="Your question..." required class="w-full p-3 sm:p-4 pt-8 sm:pt-10 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A5C38] h-32 sm:h-40 placeholder-gray-500 transition-all duration-300 text-sm sm:text-base"></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-[#1A5C38] text-white py-2 sm:py-3 rounded-lg hover:bg-[#154c2f] transition-all duration-300 font-semibold shadow-md text-sm sm:text-base">Send Message</button>
-                </form>
-            </div>
+    @include('layouts.footer')
+
+    <!-- Axios Script to fetch properties -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('properties-grid');
+
+        axios.get('/api/property')
+            .then(res => {
+                const properties = res.data.data;
+                properties.forEach(property => {
+                    // Pick main image or first image
+                    let mainImage = property.images.find(img => img.is_main) || property.images[0];
+                    let imagePath = mainImage ? `/property_images/${mainImage.imagepath.split('/').pop()}` : '/images/default-property.jpg';
+
+const card = document.createElement('div');
+card.className = 'bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition flex flex-col';
+card.innerHTML = `
+    <img src="${imagePath}" alt="${property.title}" class="w-full h-48 object-cover">
+    <div class="p-4 flex flex-col flex-grow">
+        <h3 class="text-xl font-semibold mb-2">${property.title}</h3>
+        <p class="text-gray-600 mb-3">${property.address_line_1}, ${property.city}</p>
+        <p class="text-green-600 font-bold mb-4">LKR ${parseFloat(property.price).toLocaleString()}</p>
+        <div class="mt-auto">
+            <a href="/properties/${property.id}" 
+               class="block w-full text-center bg-[#1b5d38] hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition">
+               View Details
+            </a>
         </div>
     </div>
-</section>
+`;
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    axios.get('/api/property')
-        .then(function (response) {
-            const properties = Array.isArray(response.data) ? response.data : (response.data.data || []);
-            const saleContainer = document.getElementById('forsale');
-            const rentContainer = document.getElementById('forrent');
-
-            properties.forEach(listing => {
-                const imageBase64 = listing.image_base64 || '';
-                
-                // Determine property details based on type
-                let detailsHTML = '';
-                switch(listing.property_type) {
-                    case 'residential':
-                        detailsHTML = `
-                            <span class="flex items-center">Bedrooms: ${listing.residential?.bedrooms || 0}</span>
-                            <span class="flex items-center">Bathrooms: ${listing.residential?.bathrooms || 0}</span>
-                            <span class="flex items-center">Area: ${listing.residential?.floor_area || 0} m²</span>
-                            <span class="flex items-center">Floors: ${listing.residential?.floors || 0}</span>
-                        `;
-                        break;
-                    case 'commercial':
-                        detailsHTML = `
-                            <span class="flex items-center">Floor Area: ${listing.commercial?.floor_area || 0} m²</span>
-                            <span class="flex items-center">Parking: ${listing.commercial?.parking_spaces || 0}</span>
-                            <span class="flex items-center">Business Type: ${listing.commercial?.business_type || '-'}</span>
-                            <span class="flex items-center">Floors: ${listing.commercial?.number_of_floors || 0}</span>
-                        `;
-                        break;
-                    case 'industrial':
-                        detailsHTML = `
-                            <span class="flex items-center">Power Capacity: ${listing.industrial?.power_capacity || 0} kW</span>
-                            <span class="flex items-center">Floor Load: ${listing.industrial?.floor_load_capacity || 0} kg/m²</span>
-                            <span class="flex items-center">Crane: ${listing.industrial?.crane_availability || 'No'}</span>
-                        `;
-                        break;
-                    case 'land':
-                        detailsHTML = `
-                            <span class="flex items-center">Land Size: ${listing.land?.land_size || 0} m²</span>
-                            <span class="flex items-center">Road Frontage: ${listing.land?.road_frontage || 0} m</span>
-                            <span class="flex items-center">Soil Type: ${listing.land?.soil_type || '-'}</span>
-                        `;
-                        break;
-                    case 'rental':
-                        detailsHTML = `
-                            <span class="flex items-center">Frequency: ${listing.rental?.rent_frequency || '-'}</span>
-                            <span class="flex items-center">Lease Term: ${listing.rental?.lease_term || '-'}</span>
-                            <span class="flex items-center">Furnished: ${listing.rental?.furnished || '-'}</span>
-                            <span class="flex items-center">Available From: ${listing.rental?.available_from || '-'}</span>
-                        `;
-                        break;
-                    default:
-                        detailsHTML = '';
-                }
-
-                const card = `
-                    <a href="/viewlisting/load/${listing.id}" class="block">
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden h-80 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-                            <div class="relative w-full h-40">
-                                ${imageBase64 ? `<img src="data:image/jpeg;base64,${imageBase64}" alt="Property" class="w-full h-full object-cover rounded-t-xl">` : ''}
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-t-xl"></div>
-                                <span class="absolute top-2 left-2 bg-[#1A5C38] text-white text-xs font-semibold px-2 py-1 rounded-full">
-                                    ${listing.listing_type === 'Selling' ? 'For Sale' : 'For Rent'}
-                                </span>
-                            </div>
-                            <div class="p-4">
-                                <h4 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-1">${listing.title}</h4>
-                                <p class="text-xl font-bold text-red-600 mb-2">Rs.${listing.price.toLocaleString()}${listing.listing_type === 'Renting' ? '/month' : ''}</p>
-                                <p class="text-gray-700 text-base line-clamp-1">${listing.address_line_1}</p>
-                                <div class="flex flex-wrap gap-3 mt-3 text-sm text-gray-600">
-                                    ${detailsHTML}
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                `;
-
-                if(listing.listing_type === 'Selling') saleContainer.insertAdjacentHTML('beforeend', card);
-                else rentContainer.insertAdjacentHTML('beforeend', card);
+                    grid.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error('Failed to fetch properties', err);
+                grid.innerHTML = '<p class="text-center col-span-3 text-gray-500">No properties found.</p>';
             });
-        })
-        .catch(function (error) {
-            console.error('Error loading properties:', error);
-        });
-});
-</script>
+    });
+    </script>
 
 </body>
 </html>
