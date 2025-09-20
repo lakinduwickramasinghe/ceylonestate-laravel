@@ -1,4 +1,5 @@
 <x-guest-layout>
+    @include('layouts.header')
     <x-authentication-card>
         <x-slot name="logo">
             <div class="flex items-center space-x-2 justify-center mb-4">
@@ -7,7 +8,7 @@
             </div>
         </x-slot>
 
-        <h2 class="text-xl font-bold text-center mb-4 text-gray-700">
+        <h2 class="text-xl font-bold text-center mb-2 text-gray-700">
             Welcome, Member!
         </h2>
         <p class="text-sm text-center text-gray-500 mb-6">
@@ -16,19 +17,38 @@
 
         <x-validation-errors class="mb-4" />
 
+        <!-- Google Signup Button -->
+        <div class="flex justify-center mb-6">
+            <a href="{{ url('auth/google') }}" 
+               class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md">
+                <svg class="w-5 h-5 mr-2" viewBox="0 0 488 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M488 261.8c0-17.7-1.5-35-4.5-51.8H249v98h135.4c-5.9 31-23.5 57.4-50 75.1v62h81c47.5-43.8 74.6-108.3 74.6-183.3z"/>
+                    <path d="M249 492c67.5 0 124.3-22.3 165.7-60.7l-81-62c-22.5 15-51 23.9-84.7 23.9-65.2 0-120.3-43.9-140.1-102.7H25v64.7C66.3 436.5 152.2 492 249 492z"/>
+                    <path d="M108.9 294.2c-5-15-7.9-31.2-7.9-48s2.9-33 7.9-48v-64.7H25c-23.5 46.7-23.5 101.3 0 148l83.9-64.7z"/>
+                    <path d="M249 97.6c35.3 0 67 12.1 91.9 35.8l68.8-68.8C373.3 25.7 316.5 0 249 0 152.2 0 66.3 55.5 25 142.9l83.9 64.7C128.7 141.5 183.8 97.6 249 97.6z"/>
+                </svg>
+                Sign up with Google
+            </a>
+        </div>
+
+
+        <div class="flex items-center mb-6">
+            <hr class="w-full border-gray-300">
+            <span class="px-3 text-gray-500">or</span>
+            <hr class="w-full border-gray-300">
+        </div>
+
+        <!-- Registration Form -->
         <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
             @csrf
 
             {{-- Profile Photo --}}
             <div class="flex justify-center mb-6">
                 <label for="profile_photo" class="relative cursor-pointer">
-                    <!-- Circle placeholder with text -->
                     <div id="avatarPlaceholder" class="w-24 h-24 rounded-full border-2 border-indigo-400 flex items-center justify-center text-gray-400 font-semibold text-sm">
                         Profile Photo
                     </div>
-                    <!-- Image preview -->
                     <img id="avatarPreview" class="w-24 h-24 rounded-full object-cover hidden border-2 border-indigo-400" alt="Profile Photo">
-                    
                     <input id="profile_photo" type="file" name="profile_photo" accept="image/*" class="hidden" onchange="previewAvatar(event)">
                     <div class="absolute bottom-0 right-0 bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700 transition">
                         <i class="fas fa-camera"></i>
