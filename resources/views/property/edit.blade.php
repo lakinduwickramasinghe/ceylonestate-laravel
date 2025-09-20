@@ -200,7 +200,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Load property
-    axios.get(`/api/property/${propertyId}`)
+    axios.get(`/api/property/${propertyId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
         .then(res => {
             propertyData = res.data;
             renderSections(propertyData);
@@ -218,8 +221,9 @@ document.addEventListener("DOMContentLoaded", function() {
         const formData = new FormData(form);
         formData.append('_method','PUT');
 
-        axios.post(`/api/property/${propertyId}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        axios.post(`/api/property/${propertyId}`, formData,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
         })
         .then(() => alert("Property updated successfully."))
         .catch(err => {

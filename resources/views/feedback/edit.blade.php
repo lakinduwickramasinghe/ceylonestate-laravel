@@ -33,7 +33,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function fetchFeedback() {
         try {
-            const res = await axios.get(`/api/feedback/${feedbackId}`);
+            const res = await axios.get(`/api/feedback/${feedbackId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
             feedbackData = res.data;
 
             formContainer.innerHTML = `
@@ -77,7 +80,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             await axios.put(`/api/feedback/${feedbackId}`, {
                 rating: rating,
                 message: message
-            });
+            },{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
 
             alert('Feedback updated successfully.');
             window.location.href = '{{ route("feedback.index",["id"=>auth()->id()]) }}';

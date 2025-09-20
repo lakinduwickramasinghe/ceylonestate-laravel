@@ -84,7 +84,10 @@
 
             try {
                 const userid = {{ auth()->id() }};
-                await axios.post('/api/feedback', { rating, message, userid }, { withCredentials: true });
+                await axios.post('/api/feedback', { rating, message, userid }, ,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
 
                 statusText.textContent = "Your review has been submitted!";
                 statusText.classList.remove('hidden');

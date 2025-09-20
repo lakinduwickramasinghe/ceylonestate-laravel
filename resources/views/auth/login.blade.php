@@ -10,6 +10,8 @@
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
 
+    @include('layouts.header')
+
     <div class="bg-white rounded-3xl shadow-2xl p-12 max-w-xl w-full text-center">
         <h1 class="text-4xl font-extrabold text-gray-800 mb-4">Welcome Back!</h1>
         <p class="text-gray-500 mb-10">Select your role to login</p>

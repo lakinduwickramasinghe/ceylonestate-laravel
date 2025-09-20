@@ -85,7 +85,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('properties-grid');
 
-        axios.get('/api/property')
+        axios.get('/api/property',{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(res => {
                 const properties = res.data.data;
                 properties.forEach(property => {

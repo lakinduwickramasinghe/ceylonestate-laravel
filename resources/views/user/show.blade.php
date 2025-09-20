@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('user-container');
 
     function fetchUser(userId) {
-        axios.get(`/api/user/${userId}`)
+        axios.get(`/api/user/${userId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(response => {
                 const user = response.data;
 
@@ -72,7 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function deleteUser(id) {
         if (!confirm('Are you sure you want to delete this user?')) return;
 
-        axios.delete(`/api/user/${id}`)
+        axios.delete(`/api/user/${id}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(() => {
                 alert('User deleted successfully.');
                 window.location.href = "{{ route('admin.user.index') }}";

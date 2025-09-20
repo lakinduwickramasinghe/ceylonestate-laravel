@@ -220,9 +220,10 @@ document.getElementById('property-ad-form').addEventListener('submit', function(
     const form = e.target;
     const formData = new FormData(form);
 
-    axios.post('/api/property/create', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    axios.post('/api/property/create', formData,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
     .then(res => { 
         alert('Property Ad created successfully!'); 
         form.reset(); 

@@ -35,6 +35,7 @@ class CreateNewUser implements CreatesNewUsers
             'password' => Hash::make($input['password']),
             'role' => $input['role'] ?? 'member',
         ]);
+        
 
         if (request()->hasFile('profile_photo')) {
             $user->profile_photo_path = request()->file('profile_photo')
@@ -42,6 +43,8 @@ class CreateNewUser implements CreatesNewUsers
         }
 
         $user->save();
+
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return $user;
     }

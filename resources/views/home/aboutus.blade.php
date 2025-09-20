@@ -100,14 +100,20 @@
 
         async function loadFeedbacks() {
             try {
-                const feedbackRes = await axios.get('/api/feedback');
+                const feedbackRes = await axios.get('/api/feedback',{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
                 const feedbacks = feedbackRes.data;
 
                 const feedbackContainer = document.getElementById('feedback-slider');
                 feedbackContainer.innerHTML = '';
 
                 for (const fb of feedbacks) {
-                    const userRes = await axios.get(`/api/user/${fb.userid}`);
+                    const userRes = await axios.get(`/api/user/${fb.userid}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
                     const user = userRes.data;
 
                     const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);

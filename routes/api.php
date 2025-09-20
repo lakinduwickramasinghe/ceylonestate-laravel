@@ -8,18 +8,23 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\PropertyAdController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
-Route::apiResource('property', PropertyAdController::class);
-Route::get('property/member/{id}',[PropertyAdController::class,'member_property'])->name('member.properties');
-Route::post('/property/create', [PropertyAdController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function () {
 
-Route::apiResource('user', UserController::class);
+    Route::apiResource('property', PropertyAdController::class);
+    Route::get('property/member/{id}',[PropertyAdController::class,'member_property'])->name('member.properties');
+    Route::post('/property/create', [PropertyAdController::class, 'store']);
 
-Route::apiResource('feedback', FeedbackController::class);
+    Route::apiResource('user', UserController::class);
 
-Route::get('user/{id}', [UserController::class, 'info'])->name('user.info');
+    Route::apiResource('feedback', FeedbackController::class);
 
-Route::get('feedback/member/{id}', [FeedbackController::class, 'member']);
+    Route::get('user/{id}', [UserController::class, 'info'])->name('user.info');
+
+    Route::get('feedback/member/{id}', [FeedbackController::class, 'member']);
+    
+});
+

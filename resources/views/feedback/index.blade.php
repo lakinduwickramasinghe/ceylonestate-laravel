@@ -37,7 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchUserName(userId) {
         try {
-            const res = await axios.get(`/api/user/${userId}`);
+            const res = await axios.get(`/api/user/${userId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
             const user = res.data;
             return `${user.first_name} ${user.last_name}`;
         } catch (err) {
@@ -54,7 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchFeedbacks() {
         try {
             const userId = "{{ auth()->id() }}";
-            const response = await axios.get(`/api/feedback/member/${userId}`);
+            const response = await axios.get(`/api/feedback/member/${userId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
             const data = response.data.data;
             tableBody.innerHTML = '';
 
@@ -95,7 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
 function deleteFeedback(id) {
     if (!confirm('Are you sure you want to delete this feedback?')) return;
 
-    axios.delete(`/api/feedback/${id}`)
+    axios.delete(`/api/feedback/${id}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
         .then(() => {
             alert('Feedback deleted successfully.');
             window.location.reload();

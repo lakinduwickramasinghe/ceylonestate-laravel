@@ -36,7 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const paginationDiv = document.getElementById('pagination');
 
     function fetchProperties(page = 1) {
-        axios.get(`/api/property?page=${page}`)
+        axios.get(`/api/property?page=${page}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(response => {
                 const data = response.data.data;
                 tableBody.innerHTML = '';

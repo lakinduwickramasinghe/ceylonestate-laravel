@@ -139,7 +139,10 @@ document.getElementById('property_type').addEventListener('change', (e) => {
 });
 
 function fetchAllProperties() {
-    axios.get('/api/property')
+    axios.get('/api/property',{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
         .then(res => { allProperties = res.data.data; renderProperties(allProperties); })
         .catch(err => console.error(err));
 }

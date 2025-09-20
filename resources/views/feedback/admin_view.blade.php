@@ -32,11 +32,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function fetchFeedbackWithUser() {
         try {
             // 1. Get feedback
-            const feedbackRes = await axios.get(`/api/feedback/${feedbackId}`);
+            const feedbackRes = await axios.get(`/api/feedback/${feedbackId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
             const feedback = feedbackRes.data;
 
             // 2. Get user
-            const userRes = await axios.get(`/api/user/${feedback.userid}`);
+            const userRes = await axios.get(`/api/user/${feedback.userid}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        });
             const user = userRes.data;
 
             // 3. Determine profile image
@@ -92,7 +98,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     deleteBtn.addEventListener('click', function () {
         if (!confirm('Are you sure you want to delete this feedback?')) return;
 
-        axios.delete(`/api/feedback/${feedbackId}`)
+        axios.delete(`/api/feedback/${feedbackId}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(() => {
                 alert('Feedback deleted successfully.');
                 window.location.href = '/admin/feedback';

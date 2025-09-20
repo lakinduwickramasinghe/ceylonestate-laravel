@@ -38,11 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const userId = {{ Auth::id() }}; // Logged-in user ID
 
     function fetchMemberProperties(page = 1) {
-        axios.get(`/api/property/member/${userId}?page=${page}`)
+        axios.get(`/api/property/member/${userId}?page=${page}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(response => {
                 tableBody.innerHTML = '';
 
-                // Show friendly message if API returns a message field
+                // Show message if API returns a message field
                 if (response.data.message) {
                     tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">You have no listings yet.</td></tr>`;
                     paginationDiv.innerHTML = '';

@@ -35,7 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const paginationDiv = document.getElementById('pagination');
 
     function fetchUsers(page = 1) {
-        axios.get(`/api/user`)
+        axios.get(`/api/user`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
             .then(response => {
                 const data = response.data.data;
                 tableBody.innerHTML = '';
@@ -87,7 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
 function deleteUser(id) {
     if (!confirm('Are you sure you want to delete this user?')) return;
 
-    axios.delete(`/api/user/${id}`)
+    axios.delete(`/api/user/${id}`,{
+            headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`}
+        })
         .then(() => {
             alert('User deleted successfully.');
             location.reload();
