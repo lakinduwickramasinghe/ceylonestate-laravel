@@ -4,8 +4,6 @@ use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PropertyAdController;
 use App\Http\Controllers\UserController;
-use App\Models\Feedback;
-use App\Models\PropertyAd;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,11 +25,6 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/memberdashboard', function () {
-    return view('dashboards.member');
-})->middleware('auth')->name('member-db');
-
-Route::resource('property', PropertyAdController::class);
 
 Route::get('login/admin', function () {
     return view('auth.admin-login');
@@ -41,28 +34,6 @@ Route::get('login/member', function () {
     return view('auth.member-login');
 })->name('login.member');
 
-Route::middleware(['auth:sanctum'])->group(function () {
-
-    Route::get('admin/property',[PropertyAdController::class,'admin_index'])->name('admin.property.index');
-    Route::get('admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
-    Route::get('/admindashboard', function () {
-        return view('dashboards.admin');
-    })->name('admin-db');
-
-    Route::get('admin/user',[UserController::class,'index'])->name('admin.user.index');
-    Route::get('admin/user/{id}',[UserController::class,'show'])->name('admin.user.show');
-});
-
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/chat', [ChatController::class, 'showChatPage'])->name('chat.page');
-    Route::get('/chat/{userId}', [ChatController::class, 'openChat'])->name('chat.open');
-    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
-    Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
-    Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
-});
-
 Route::get('aboutus', function () {
     return view('home.aboutus');
 })->name('aboutus');
@@ -71,28 +42,52 @@ Route::get('properties', function () {
     return view('home.properties');
 })->name('properties');
 
-Route::get('/admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
-
-// Route::get('/test', function () {
-//     $feedback = Feedback::create([
-//         'userid' => 1,
-//         'rating' => 1,
-//         'message' => 'It was okay.',
-//     ]);
-
-//     return $feedback;
-// });
-
-// Route::get('/test', function () {
-//     return view('auth.role-select');
-// })->name('about');
-
 Route::get('feedback/create', function () {
     return view('home.create_feedback');
 })->name('feedback.create');
 
-Route::get('admin/feedback', [FeedbackController::class, 'admin_index'])->name('admin.feedback.index');
-Route::get('admin/feedback/{id}', [FeedbackController::class, 'admin_view'])->name('admin.feedback.view');
-Route::get('feedback/{id}', [FeedbackController::class, 'index'])->name('feedback.index');
-Route::resource('feedback', FeedbackController::class)->except(['index','create','show']);
-Route::get('feedback/show/{id}', [FeedbackController::class, 'show'])->name('feedback.show');
+
+
+// Admin Web Routes
+Route::middleware(['role:admin'])->group(function () {
+
+    Route::get('/admindashboard', function () {
+        return view('dashboards.admin');
+    })->name('admin-db');
+
+    Route::get('admin/property',[PropertyAdController::class,'admin_index'])->name('admin.property.index');
+    Route::get('admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+    Route::get('/admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+    
+    Route::get('admin/user',[UserController::class,'index'])->name('admin.user.index');
+    Route::get('admin/user/{id}',[UserController::class,'show'])->name('admin.user.show');
+
+    Route::get('admin/feedback', [FeedbackController::class, 'admin_index'])->name('admin.feedback.index');
+    Route::get('admin/feedback/{id}', [FeedbackController::class, 'admin_view'])->name('admin.feedback.view');
+});
+
+
+
+// Member Web Routes
+Route::middleware(['role:member'])->group(function () {
+
+    Route::get('/memberdashboard', function () {
+        return view('dashboards.member');
+    })->name('member-db');
+
+    Route::get('feedback/{id}', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::resource('feedback', FeedbackController::class)->except(['index','create','show']);
+    Route::get('feedback/show/{id}', [FeedbackController::class, 'show'])->name('feedback.show');
+    Route::resource('property', PropertyAdController::class);
+
+});
+
+
+Route::middleware(['role:admin,member'])->group(function () {
+
+    Route::get('/chat', [ChatController::class, 'showChatPage'])->name('chat.page');
+    Route::get('/chat/{userId}', [ChatController::class, 'openChat'])->name('chat.open');
+    Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
+    Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
+    Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
+});
