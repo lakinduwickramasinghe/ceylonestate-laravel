@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\api\ChatController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PropertyAdController;
 use App\Http\Controllers\UserController;
+use App\Models\Feedback;
 use App\Models\PropertyAd;
 use Illuminate\Support\Facades\Route;
 
@@ -30,10 +32,6 @@ Route::get('/memberdashboard', function () {
 })->middleware('auth')->name('member-db');
 
 Route::resource('property', PropertyAdController::class);
-
-Route::get('/test', function () {
-    return view('auth.role-select');
-})->name('about');
 
 Route::get('login/admin', function () {
     return view('auth.admin-login');
@@ -74,3 +72,27 @@ Route::get('properties', function () {
 })->name('properties');
 
 Route::get('/admin/property/{id}',[PropertyAdController::class,'admin_view'])->name('admin.property.view');
+
+// Route::get('/test', function () {
+//     $feedback = Feedback::create([
+//         'userid' => 1,
+//         'rating' => 1,
+//         'message' => 'It was okay.',
+//     ]);
+
+//     return $feedback;
+// });
+
+// Route::get('/test', function () {
+//     return view('auth.role-select');
+// })->name('about');
+
+Route::get('feedback/create', function () {
+    return view('home.create_feedback');
+})->name('feedback.create');
+
+Route::get('admin/feedback', [FeedbackController::class, 'admin_index'])->name('admin.feedback.index');
+Route::get('admin/feedback/{id}', [FeedbackController::class, 'admin_view'])->name('admin.feedback.view');
+Route::get('feedback/{id}', [FeedbackController::class, 'index'])->name('feedback.index');
+Route::resource('feedback', FeedbackController::class)->except(['index','create','show']);
+Route::get('feedback/show/{id}', [FeedbackController::class, 'show'])->name('feedback.show');

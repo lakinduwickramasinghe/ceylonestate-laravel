@@ -80,4 +80,13 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function info($id){
+        $user = User::findOrFail($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        return response()->json($user);
+    }
 }

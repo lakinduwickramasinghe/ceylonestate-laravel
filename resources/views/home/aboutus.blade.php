@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Ceylon Estate</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="icon" href="{{ asset('favicon.png') }}" type="image/x-icon">
 </head>
 <body class="bg-gray-50 font-sans">
@@ -46,7 +47,6 @@
     <section class="py-16 max-w-6xl mx-auto px-6">
         <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Meet Our Team</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-            <!-- Team Member -->
             <div class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
                 <img src="{{ asset('images/person1.webp') }}" alt="Team Member" class="w-32 h-32 mx-auto rounded-full mb-4 object-cover">
                 <h3 class="text-xl font-semibold">Patrick Mill</h3>
@@ -64,6 +64,82 @@
             </div>
         </div>
     </section>
+
+    <!-- Feedbacks Section -->
+    <section class="py-16 bg-gradient-to-r from-green-50 to-blue-50">
+        <div class="max-w-6xl mx-auto px-6 text-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">What Our Clients Say</h2>
+            <p class="text-gray-600 mb-4">Real experiences from our happy clients across Sri Lanka.</p>
+            <!-- Create Review Button -->
+            <a href="{{route('feedback.create')}}" class="bg-[#1b5d38] hover:bg-[#154526] text-white px-6 py-2 rounded-lg shadow-md transition inline-block mb-6">
+                Create Review
+            </a>
+        </div>
+        
+        <div id="feedback-container" class="overflow-hidden relative max-w-6xl mx-auto px-6 pb-12">
+            <div id="feedback-slider" class="flex space-x-6 transition-transform duration-1000 ease-linear">
+                <!-- Feedback cards dynamically injected here -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const slider = document.getElementById('feedback-slider');
+        let scrollAmount = 0;
+
+        function autoSlide() {
+            const slideStep = 360; // card width + spacing
+            scrollAmount += slideStep;
+            if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
+                scrollAmount = 0;
+            }
+            slider.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+
+        setInterval(autoSlide, 3500);
+
+        async function loadFeedbacks() {
+            try {
+                const feedbackRes = await axios.get('/api/feedback');
+                const feedbacks = feedbackRes.data;
+
+                const feedbackContainer = document.getElementById('feedback-slider');
+                feedbackContainer.innerHTML = '';
+
+                for (const fb of feedbacks) {
+                    const userRes = await axios.get(`/api/user/${fb.userid}`);
+                    const user = userRes.data;
+
+                    const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
+
+                    const profileImage = user.profile_photo_path 
+                        ? `{{ asset('storage') }}/${user.profile_photo_path}`
+                        : user.profile_photo_url;
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-xl border-t-4 border-blue-500 shadow-lg p-6 min-w-[340px] hover:shadow-2xl transition relative flex-shrink-0';
+                    card.innerHTML = `
+                        <svg class="absolute top-4 right-4 w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M7 17h3V7H5v7h2v3zm9 0h3V7h-5v7h2v3z"/>
+                        </svg>
+                        <div class="flex items-center mb-4">
+                            <img src="${profileImage}" alt="Profile" class="w-12 h-12 rounded-full mr-4 object-cover">
+                            <div class="text-left">
+                                <h3 class="text-lg font-semibold text-gray-900">${user.first_name} ${user.last_name}</h3>
+                                <div class="flex text-yellow-400">${stars}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">"${fb.message}"</p>
+                    `;
+                    feedbackContainer.appendChild(card);
+                }
+            } catch (err) {
+                console.error('Error loading feedbacks:', err);
+            }
+        }
+
+        loadFeedbacks();
+    </script>
 
     @include('layouts.footer');
 

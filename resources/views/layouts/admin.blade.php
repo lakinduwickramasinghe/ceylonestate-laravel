@@ -122,7 +122,7 @@
             </div>
         </a>
 
-        <a href="">
+        <a href="{{ route('admin.feedback.index') }}">
             <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
                 <i class="fas fa-star text-gray-500 mr-3"></i> Reviews
             </div>

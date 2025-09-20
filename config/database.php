@@ -16,7 +16,8 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mysql'),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -30,6 +31,12 @@ return [
     */
 
     'connections' => [
+        
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'dsn'      => env('MONGO_URI'),   
+            'database' => 'ceylonestate', 
+        ],
 
         'sqlite' => [
             'driver' => 'sqlite',
