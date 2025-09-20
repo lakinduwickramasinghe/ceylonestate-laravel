@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropertyAd extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'title','description','property_type','price','status',
         'address_line_1','address_line_2','city','province','postal_code',
