@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\PropertyAd;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -57,7 +58,7 @@ class PropertyAdController extends Controller
             // 1. Create main property ad
             $property = PropertyAd::create(array_merge(
                 $data,
-                ['user_id' => $request->user()->id ?? 1] // Replace 1 with Auth::id() in production
+                ['user_id' => $request->user()->id ?? Auth::id()] // Replace 1 with Auth::id() in production
             ));
 
             // 2. Create related property type record
@@ -139,6 +140,7 @@ class PropertyAdController extends Controller
         return response()->json($ad, 200);
     }
 
+
     public function update(Request $request, $id)
     {
         $property = PropertyAd::with([
@@ -154,7 +156,6 @@ class PropertyAdController extends Controller
             'title'         => 'required|string|max:255',
             'description'   => 'nullable|string',
             'property_type' => 'required|in:residential,commercial,industrial,land',
-            'listing_type'  => 'required',
             'status'        => 'required|in:available,sold,rented,inactive',
             'price'         => 'nullable|numeric',
             'address_line_1'=> 'required|string|max:255',
@@ -164,7 +165,6 @@ class PropertyAdController extends Controller
             'postal_code'   => 'nullable|string|max:20',
             'latitude'      => 'nullable|numeric',
             'longitude'     => 'nullable|numeric',
-
             // Images
             'images.*'      => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             'main_image_id' => 'nullable|exists:property_images,id',
@@ -176,11 +176,41 @@ class PropertyAdController extends Controller
 
         $validated = $validator->validated();
 
+        // Check if property_type has changed
+        $oldPropertyType = $property->property_type;
+        $newPropertyType = $validated['property_type'];
+
         // Update main property
         $property->update($validated);
 
-        // Update type-specific data
-        switch ($request->property_type) {
+        // If property_type has changed, delete the old type's record
+        if ($oldPropertyType !== $newPropertyType) {
+            switch ($oldPropertyType) {
+                case 'residential':
+                    if ($property->residential) {
+                        $property->residential->delete();
+                    }
+                    break;
+                case 'commercial':
+                    if ($property->commercial) {
+                        $property->commercial->delete();
+                    }
+                    break;
+                case 'industrial':
+                    if ($property->industrial) {
+                        $property->industrial->delete();
+                    }
+                    break;
+                case 'land':
+                    if ($property->land) {
+                        $property->land->delete();
+                    }
+                    break;
+            }
+        }
+
+        // Update or create type-specific data
+        switch ($newPropertyType) {
             case 'residential':
                 $data = $request->input('residential', []);
                 $property->residential
@@ -243,7 +273,6 @@ class PropertyAdController extends Controller
             ])
         ]);
     }
-
 
     public function destroy($id)
     {

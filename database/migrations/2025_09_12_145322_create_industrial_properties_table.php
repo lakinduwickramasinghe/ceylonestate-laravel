@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('floor_load_capacity', 8, 2)->nullable();
             $table->boolean('crane_availability')->default(false);
             $table->json('access_roads')->nullable();
-            $table->boolean('waste_disposal')->default(false);
+            $table->string('waste_disposal')->default(false);
             $table->json('safety_certifications')->nullable();
             $table->timestamps();
         });
