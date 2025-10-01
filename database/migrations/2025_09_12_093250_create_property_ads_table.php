@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('property_type', ['residential','commercial','land','industrial']);
-            $table->decimal('price', 12, 2)->nullable();
-            $table->enum('status', ['available','sold','rented','inactive'])->default('available');
+            $table->decimal('price', 20, 2)->nullable();
+            $table->enum('status', ['available','sold','inactive'])->default('available');
             $table->string('address_line_1');
             $table->string('address_line_2')->nullable();
             $table->string('city');

@@ -17,7 +17,7 @@ class PropertyAdFactory extends Factory
             'description' => $this->faker->paragraph,
             'property_type' => $this->faker->randomElement(['residential','commercial','land','industrial']),
             'price' => $this->faker->randomFloat(2, 50000, 5000000),
-            'status' => $this->faker->randomElement(['available','sold','rented','inactive']),
+            'status' => $this->faker->randomElement(['available','sold','inactive']),
             'address_line_1' => $this->faker->streetAddress,
             'address_line_2' => $this->faker->secondaryAddress,
             'city' => $this->faker->city,

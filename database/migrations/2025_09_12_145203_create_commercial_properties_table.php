@@ -12,12 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('property_id')->constrained('property_ads')->onDelete('cascade');
             $table->decimal('floor_area', 10, 2)->nullable();
-            $table->tinyInteger('number_of_floors')->unsigned()->nullable();
-            $table->tinyInteger('parking_spaces')->unsigned()->nullable();
+            $table->integer('number_of_floors')->unsigned()->nullable();
+            $table->integer('parking_spaces')->unsigned()->nullable();
             $table->decimal('power_capacity', 10, 2)->nullable();
             $table->string('business_type', 100)->nullable();
-            $table->tinyInteger('loading_docks')->unsigned()->nullable();
-            $table->tinyInteger('conference_rooms')->unsigned()->nullable();
+            $table->integer('loading_docks')->unsigned()->nullable();
+            $table->integer('conference_rooms')->unsigned()->nullable();
             $table->json('accessibility_features')->nullable();
             $table->timestamps();
         });
