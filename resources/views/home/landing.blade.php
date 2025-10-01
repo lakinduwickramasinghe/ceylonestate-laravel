@@ -85,33 +85,34 @@
     document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('properties-grid');
 
-        axios.get('/api/property',{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        })
+        axios.get('/api/properties')
             .then(res => {
                 const properties = res.data.data;
-                properties.forEach(property => {
+
+                // Only take top 3 records
+                properties.slice(0, 3).forEach(property => {
                     // Pick main image or first image
                     let mainImage = property.images.find(img => img.is_main) || property.images[0];
-                    let imagePath = mainImage ? `/property_images/${mainImage.imagepath.split('/').pop()}` : '/images/default-property.jpg';
+                    let imagePath = mainImage 
+                        ? `/property_images/${mainImage.imagepath.split('/').pop()}` 
+                        : '/images/default-property.jpg';
 
-const card = document.createElement('div');
-card.className = 'bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition flex flex-col';
-card.innerHTML = `
-    <img src="${imagePath}" alt="${property.title}" class="w-full h-48 object-cover">
-    <div class="p-4 flex flex-col flex-grow">
-        <h3 class="text-xl font-semibold mb-2">${property.title}</h3>
-        <p class="text-gray-600 mb-3">${property.address_line_1}, ${property.city}</p>
-        <p class="text-green-600 font-bold mb-4">LKR ${parseFloat(property.price).toLocaleString()}</p>
-        <div class="mt-auto">
-            <a href="/properties/${property.id}" 
-               class="block w-full text-center bg-[#1b5d38] hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition">
-               View Details
-            </a>
-        </div>
-    </div>
-`;
+                    const card = document.createElement('div');
+                    card.className = 'bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition flex flex-col';
+                    card.innerHTML = `
+                        <img src="${imagePath}" alt="${property.title}" class="w-full h-48 object-cover">
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">${property.title}</h3>
+                            <p class="text-gray-600 mb-3">${property.address_line_1}, ${property.city}</p>
+                            <p class="text-green-600 font-bold mb-4">LKR ${parseFloat(property.price).toLocaleString()}</p>
+                            <div class="mt-auto">
+                                <a href="/properties/${property.id}" 
+                                class="block w-full text-center bg-[#1b5d38] hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition">
+                                View Details
+                                </a>
+                            </div>
+                        </div>
+                    `;
 
                     grid.appendChild(card);
                 });
@@ -122,6 +123,5 @@ card.innerHTML = `
             });
     });
     </script>
-
 </body>
 </html>

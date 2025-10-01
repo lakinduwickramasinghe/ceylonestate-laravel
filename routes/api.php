@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\PropertyAdController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('property', PropertyAdController::class);
@@ -27,4 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('feedback/member/{id}', [FeedbackController::class, 'member']);
     
 });
+
+Route::get('/properties',[PropertyAdController::class,'all']);
+Route::get('/properties/{id}',[PropertyAdController::class,'viewone']);
 

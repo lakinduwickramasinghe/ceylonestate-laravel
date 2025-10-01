@@ -321,4 +321,24 @@ class PropertyAdController extends Controller
         return response()->json($ads, 200);
     }
 
+    public function all()
+    {
+        $ads = PropertyAd::with(['residential', 'commercial', 'land', 'industrial', 'user', 'images'])
+            ->latest()
+            ->paginate(10);
+
+        return response()->json($ads, 200);
+    }
+    public function viewone(string $id)
+    {
+        $ad = PropertyAd::with(['user','residential','commercial','land','industrial','images'])
+            ->find($id);
+
+        if (!$ad) {
+            return response()->json(['message' => 'Property ad not found'], 404);
+        }
+
+        return response()->json($ad, 200);
+    }
+
 }

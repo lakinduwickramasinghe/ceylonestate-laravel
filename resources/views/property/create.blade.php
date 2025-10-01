@@ -895,9 +895,5 @@ document.addEventListener("DOMContentLoaded", function() {
     updateUtilitiesInput();
 });
 
-
-
-
-
 </script>
 @endsection

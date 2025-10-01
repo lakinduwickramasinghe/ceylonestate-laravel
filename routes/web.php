@@ -89,10 +89,12 @@ Route::middleware(['role:member'])->group(function () {
 
 
 Route::middleware(['role:admin,member'])->group(function () {
-
+    
     Route::get('/chat', [ChatController::class, 'showChatPage'])->name('chat.page');
     Route::get('/chat/{userId}', [ChatController::class, 'openChat'])->name('chat.open');
     Route::post('/chat/send', [ChatController::class, 'store'])->name('chat.send');
     Route::get('/chat/messages/{userId}', [ChatController::class, 'index'])->name('chat.messages');
     Route::post('/chat/seen/{userId}', [ChatController::class, 'markAsSeen'])->name('chat.seen');
 });
+
+Route::get('/properties/{id}',[PropertyAdController::class,'show'])->name('property.show');
