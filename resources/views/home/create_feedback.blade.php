@@ -77,17 +77,38 @@
             const rating = document.getElementById('rating').value;
             const message = document.getElementById('message').value;
 
-            if(rating === "0") {
+            if (rating === "0") {
                 alert("Please select a rating");
                 return;
             }
 
             try {
                 const userid = {{ auth()->id() }};
-                await axios.post('/api/feedback', { rating, message, userid }, ,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
+                await axios.post('/api/feedback', { rating, message, userid }, {
+                    headers: {
+                        Authorization: `Bearer {{ session('auth_token') }}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Create notification for successful review submission
+                const newNotification = {
+                    user_id: userid,
+                    title: "Your Review Submitted",
+                    content: "Your review has been successfully submitted.",
+                    type: 'review',
+                    ref: rating
+                };
+                await axios.post('/api/notification', newNotification, {
+                    headers: {
+                        Authorization: `Bearer {{ session('auth_token') }}`,
+                        'Content-Type': 'application/json'
+                    }
+                }).then(() => {
+                    console.log('Notification created successfully');
+                }).catch(err => {
+                    console.error('Failed to create notification:', err.response?.data || err);
+                });
 
                 statusText.textContent = "Your review has been submitted!";
                 statusText.classList.remove('hidden');
