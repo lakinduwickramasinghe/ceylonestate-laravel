@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\api\ChatController;
-use App\Http\Controllers\api\FeedbackController;
-use App\Http\Controllers\api\NotificationController;
-use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Middleware\CheckTokenExpiration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

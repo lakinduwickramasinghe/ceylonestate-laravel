@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\api\ChatController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\PropertyAdController;
 use App\Http\Controllers\UserController;
