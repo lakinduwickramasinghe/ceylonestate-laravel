@@ -21,9 +21,7 @@ class ChatWindow extends Component
         $this->loadUsers();
     }
 
-    /**
-     * Load users for sidebar.
-     */
+    // Load users for sidebar.
     public function loadUsers()
     {
         $authId = Auth::id();

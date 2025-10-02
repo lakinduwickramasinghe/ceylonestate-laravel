@@ -103,4 +103,19 @@ class User extends Authenticatable
     {
         return $this->role === 'member';
     }
+
+    // Mutators
+    public function setUsernameAttribute($value){
+        $this->attributes['username'] = strtolower($value);
+    }
+    public function setEmailAttribute($value){
+        $this->attributes['email'] = strtolower($value);
+    }
+    public function setFirstNameAttribute($value){
+        $this->attributes['first_name'] = ucwords(strtolower($value));
+    }
+    public function setLastNameAttribute($value){
+        $this->attributes['last_name'] = ucwords(strtolower($value));
+    }
+
 }

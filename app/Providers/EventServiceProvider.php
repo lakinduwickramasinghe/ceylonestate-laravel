@@ -16,12 +16,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        // You can map events to listener classes here if needed
     ];
 
-    /**
-     * Register any events for your application.
-     */
     public function boot(): void
     {
         parent::boot();
