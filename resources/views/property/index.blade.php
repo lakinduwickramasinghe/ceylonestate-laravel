@@ -1,6 +1,6 @@
 @extends('layouts.member')
 
-@section('title','My Properties - Member Panel')
+@section('title','My Properties - Member Dashboard')
 
 @section('content')
 <div class="flex justify-between items-center mb-6">
@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchMemberProperties(page = 1) {
         axios.get(`/api/property/member/${userId}?page=${page}`,{
             headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
+                Authorization: `Bearer {{ session('auth_token') }}`
+            }
         })
             .then(response => {
                 tableBody.innerHTML = '';
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
                             <a href="/property/${property.id}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
                             <a href="/property/${property.id}/edit" class="text-green-600 hover:text-green-800"><i class="fas fa-edit"></i></a>
-                            <button onclick="deleteMemberProperty(${property.id})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
+                            <button onclick="deleteMemberProperty(${property.id}, '${property.title.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -105,19 +106,46 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Delete property
-function deleteMemberProperty(id) {
+function deleteMemberProperty(id, title) {
     if (!confirm('Are you sure you want to delete this property?')) return;
 
-    axios.delete(`/api/property/${id}`)
+    axios.delete(`/api/property/${id}`, {
+        headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`
+        }
+    })
         .then(() => {
+            // Create a notification for property deletion
+            try {
+                const newNotification = {
+                    user_id: {{ Auth::id() }},
+                    title: `Your Property "${title}" has been deleted`,
+                    content: `Your property "${title}" has been successfully removed from the system.`,
+                    type: 'property',
+                    ref: String(id)
+                };
+                axios.post('/api/notification', newNotification, {
+                    headers: {
+                        Authorization: `Bearer {{ session('auth_token') }}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => {
+                    console.log('Notification created successfully');
+                })
+                .catch(err => {
+                    console.error('Failed to create notification:', err.response?.data || err);
+                });
+            } catch (err) {
+                console.error('Failed to create notification:', err.response?.data || err);
+            }
             alert('Property deleted successfully.');
             location.reload();
         })
         .catch(err => {
-            console.error(err);
+            console.error('Failed to delete property:', err);
             alert('Failed to delete property.');
         });
 }
-
 </script>
 @endsection

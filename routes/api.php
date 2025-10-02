@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\FeedbackController;
+use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,8 +22,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user/{id}', [UserController::class, 'info'])->name('user.info');
 
     Route::get('feedback/member/{id}', [FeedbackController::class, 'member']);
+
+    Route::apiResource('notification', NotificationController::class)->only(['store', 'show', 'destroy']);
+    Route::get('notification/user/{userId}', [NotificationController::class, 'index']);
+    Route::patch('/notification/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::patch('/notifications/{userId}/mark-all-read', [NotificationController::class, 'markAllAsRead']);
     
 });
+
 
 Route::get('/properties',[PropertyAdController::class,'all']);
 Route::get('/properties/{id}',[PropertyAdController::class,'viewone']);

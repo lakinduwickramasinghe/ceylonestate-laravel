@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title','Property Ads - Admin Panel')
+@section('title','Property Ads - Admin Dashboard')
 
 @section('content')
 <div class="flex justify-between items-center mb-6">
@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchProperties(page = 1) {
         axios.get(`/api/property?page=${page}`,{
             headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
+                Authorization: `Bearer {{ session('auth_token') }}`
+            }
         })
             .then(response => {
                 const data = response.data.data;
@@ -60,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${new Date(property.created_at).toLocaleDateString()}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
                             <a href="/admin/property/${property.id}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
-                            <button onclick="deleteProperty(${property.id})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
+                            <button onclick="deleteProperty(${property.id}, '${property.title.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -89,19 +90,61 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchProperties();
 });
 
-function deleteProperty(id) {
+function deleteProperty(id, title) {
     if (!confirm('Are you sure you want to delete this property?')) return;
 
-    axios.delete(`/api/property/${id}`)
-        .then(() => {
-            alert('Property deleted successfully.');
-            location.reload();
+    // Fetch property details to get the owner's user_id
+    axios.get(`/api/property/${id}`, {
+        headers: {
+            Authorization: `Bearer {{ session('auth_token') }}`
+        }
+    })
+        .then(response => {
+            const property = response.data;
+
+            // Proceed with deletion
+            axios.delete(`/api/property/${id}`, {
+                headers: {
+                    Authorization: `Bearer {{ session('auth_token') }}`
+                }
+            })
+                .then(() => {
+                    // Create a notification for the property owner
+                    try {
+                        const newNotification = {
+                            user_id: property.user_id,
+                            title: `Your Property "${title}" has been deleted`,
+                            content: `Your property "${title}" has been removed from the system by an administrator of the platform.`,
+                            type: 'property',
+                            ref: String(id)
+                        };
+                        axios.post('/api/notification', newNotification, {
+                            headers: {
+                                Authorization: `Bearer {{ session('auth_token') }}`,
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(() => {
+                            console.log('Notification created successfully');
+                        })
+                        .catch(err => {
+                            console.error('Failed to create notification:', err.response?.data || err);
+                        });
+                    } catch (err) {
+                        console.error('Failed to create notification:', err.response?.data || err);
+                    }
+                    alert('Property deleted successfully.');
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error('Failed to delete property:', err);
+                    alert('Failed to delete property.');
+                });
         })
         .catch(err => {
-            console.error(err);
-            alert('Failed to delete property.');
+            console.error('Failed to fetch property details:', err);
+            alert('Failed to fetch property details for deletion.');
         });
 }
-
 </script>
 @endsection

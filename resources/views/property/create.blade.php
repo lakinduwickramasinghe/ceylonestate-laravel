@@ -694,10 +694,33 @@ document.getElementById('property-ad-form').addEventListener('submit', function(
             headers: {
             Authorization: `Bearer {{ session('auth_token') }}`}
         })
-    .then(res => { 
+    .then(async res => { 
         alert('Property Ad created successfully!'); 
         form.reset(); 
         imagePreview.innerHTML = '';
+
+        // Create a notification
+        try {
+            const newNotification = {
+                user_id: {{ Auth::id() }}, // current user
+                title: `Your Property "${formData.get('title')}" has been created`,
+                content: `Your new property "${formData.get('title')}" has been successfully created and is now listed in the system.`,
+                type: 'property',
+                ref: String(res.data.id) // convert to string
+            };
+
+            await axios.post('/api/notification', newNotification, {
+                headers: { 
+                    Authorization: `Bearer {{ session('auth_token') }}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Notification created successfully');
+        } catch (err) {
+            console.error('Failed to create notification:', err.response?.data || err);
+        }
+
         window.location.href = `/property`; 
     })
     .catch(err => {

@@ -68,8 +68,51 @@
     <div class="flex items-center space-x-4 ml-4 relative">
         <span class="text-gray-500 text-lg cursor-pointer hover:text-gray-700"><i class="fas fa-gear"></i></span>
         <div class="relative">
-            <span class="text-gray-500 text-lg cursor-pointer hover:text-gray-700"><i class="fas fa-bell"></i></span>
-            <div class="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-medium">2</div>
+            <!-- Notification Bell -->
+<div class="relative">
+    <span id="notification-btn" class="text-gray-500 text-lg cursor-pointer hover:text-gray-700 relative">
+        <i class="fas fa-bell"></i>
+        <div id="notification-count" 
+             class="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-medium">
+            0
+        </div>
+    </span>
+
+    <!-- Notification Dropdown -->
+    <div id="notification-panel" 
+         class="hidden absolute right-0 mt-3 w-96 rounded-2xl shadow-2xl border z-50
+                bg-white border-gray-100 dark-mode:bg-gray-800 dark-mode:border-gray-700">
+        
+        <!-- Header -->
+        <div class="flex justify-between items-center px-4 py-3 border-b border-gray-100 dark-mode:border-gray-700">
+            <h3 class="text-sm font-semibold text-gray-800 dark-mode:text-gray-200">Notifications</h3>
+            <button id="mark-all-read" 
+                    class="text-xs font-medium text-green-600 hover:text-green-700 hover:underline">
+                Mark all as read
+            </button>
+        </div>
+
+        <!-- Notifications list -->
+        <div id="notification-list" class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark-mode:divide-gray-700">
+            <!-- Dynamic content via JS -->
+            <div class="px-4 py-3 text-center text-gray-500 dark-mode:text-gray-400 text-sm">
+                Loading...
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-4 py-2 border-t border-gray-100 dark-mode:border-gray-700 text-center">
+            <a href="#" class="text-xs text-gray-500 hover:text-gray-700 dark-mode:text-gray-300">
+                View all notifications
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay -->
+<div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-30 z-40"></div>
+
+
         </div>
         <!-- Theme Toggle with Icons -->
         <label class="theme-switch" id="theme-switch">
@@ -159,6 +202,7 @@
     @yield('content')
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 // Toggle sub-nav
 document.querySelectorAll('.sidebar-item.flex-col > .flex').forEach(item => {
@@ -194,6 +238,113 @@ document.addEventListener('click', (e) => {
         profileDropdown.style.display = 'none';
     }
 });
+
+
+//notifications panel js
+const notificationBtn = document.getElementById('notification-btn');
+const notificationPanel = document.getElementById('notification-panel');
+const notificationList = document.getElementById('notification-list');
+const notificationCount = document.getElementById('notification-count');
+const overlay = document.getElementById('overlay');
+const markAllReadBtn = document.getElementById('mark-all-read');
+
+const userId = "{{ Auth::id() }}";  
+
+// Fetch notifications
+async function fetchNotifications() {
+    try {
+        const response = await axios.get(`/api/notification/user/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch notifications', error);
+        return [];
+    }
+}
+
+// Update notification counter
+async function updateNotificationCount() {
+    const notifications = await fetchNotifications();
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+
+    if (unreadCount > 0) {
+        notificationCount.innerText = unreadCount;
+        notificationCount.classList.remove('hidden'); // show bubble
+    } else {
+        notificationCount.innerText = '';
+        notificationCount.classList.add('hidden'); // hide bubble
+    }
+}
+
+// Load notifications panel
+async function loadNotificationPanel() {
+    notificationList.innerHTML = `<div class="px-4 py-3 text-center text-gray-500">Loading...</div>`;
+    const notifications = await fetchNotifications();
+
+    if (!notifications.length) {
+        notificationList.innerHTML = `<div class="px-4 py-3 text-center text-gray-500 dark-mode:text-gray-400 text-sm">No new notifications</div>`;
+        return;
+    }
+
+    notificationList.innerHTML = notifications.map(n => `
+        <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark-mode:hover:bg-gray-700 transition ${n.is_read ? 'opacity-50' : ''}" data-id="${n.id}">
+            <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm text-gray-800 dark-mode:text-gray-200 font-medium">${n.title}</p>
+                <p class="text-xs text-gray-500 dark-mode:text-gray-400">${new Date(n.created_at).toLocaleString()}</p>
+            </div>
+            ${!n.is_read ? `<button class="mark-read text-xs text-green-600 hover:text-green-700">Read</button>` : ''}
+        </div>
+    `).join('');
+
+    document.querySelectorAll('.mark-read').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const parent = e.target.closest('[data-id]');
+            const id = parent.getAttribute('data-id');
+            await axios.patch(`/api/notification/${id}/read`);
+            parent.classList.add('opacity-50');
+            e.target.remove();
+            await updateNotificationCount();
+        });
+    });
+}
+
+// Initial load
+updateNotificationCount();
+setInterval(updateNotificationCount, 10000); // poll every 10s
+
+// Toggle notification panel
+notificationBtn.addEventListener('click', async () => {
+    const isHidden = notificationPanel.classList.contains('hidden');
+    notificationPanel.classList.toggle('hidden');
+    overlay.classList.toggle('hidden', !isHidden);
+
+    if (isHidden) {
+        await loadNotificationPanel();
+    }
+});
+
+// Mark all as read
+markAllReadBtn.addEventListener('click', async () => {
+    await axios.patch(`/api/notifications/${userId}/mark-all-read`);
+    document.querySelectorAll('#notification-list [data-id]').forEach(el => {
+        el.classList.add('opacity-50');
+        const btn = el.querySelector('.mark-read');
+        if (btn) btn.remove();
+    });
+    notificationCount.innerText = '';
+    notificationCount.classList.add('hidden'); // hide bubble
+});
+
+// Close panel if clicked outside
+document.addEventListener('click', (e) => {
+    if (!notificationBtn.contains(e.target) && !notificationPanel.contains(e.target)) {
+        notificationPanel.classList.add('hidden');
+        overlay.classList.add('hidden');
+    }
+});
+
 </script>
 </body>
 </html>

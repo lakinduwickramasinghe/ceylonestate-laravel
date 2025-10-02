@@ -613,7 +613,7 @@ document.getElementById('current-location-btn').addEventListener('click', () => 
             map.setCenter(coords);
             marker.setPosition(coords);
             document.getElementById('latitude').value = coords.lat;
-            document.getElementById('longitude').value = coords.lng();
+            document.getElementById('longitude').value = coords.lng;
         }, () => alert('Could not get your location.'));
     } else { alert('Geolocation is not supported by your browser.'); }
 });
@@ -728,19 +728,43 @@ function renderExistingImages(images) {
     });
 }
 
-// Axios form submission
+// Axios form submission with notification creation
 document.getElementById('property-ad-form').addEventListener('submit', function(e){
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
 
-    axios.post(`/api/property/${propertyId}`, formData,{
+    axios.post(`/api/property/${propertyId}`, formData, {
         headers: {
             Authorization: `Bearer {{ session('auth_token') }}`
         }
     })
     .then(res => { 
-        alert('Property Ad updated successfully!'); 
+        // Create a notification
+        try {
+            const newNotification = {
+                user_id: {{ Auth::id() }},
+                title: `Your Property "${formData.get('title')}" has been updated`,
+                content: `Your property "${formData.get('title')}" has been successfully updated and is now listed in the system.`,
+                type: 'property',
+                ref: String(res.data.id)
+            };
+            axios.post('/api/notification', newNotification, {
+                headers: {
+                    Authorization: `Bearer {{ session('auth_token') }}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(() => {
+                console.log('Notification created successfully');
+            })
+            .catch(err => {
+                console.error('Failed to create notification:', err.response?.data || err);
+            });
+        } catch (err) {
+            console.error('Failed to create notification:', err.response?.data || err);
+        }
+        alert('Property Ad updated successfully!');
         window.location.href = `/property`; 
     })
     .catch(err => {
@@ -883,7 +907,6 @@ roadOptions.forEach(option => {
 });
 
 // land 
-
 // Utilities tag select
 const utilitiesContainer = document.getElementById('utilities-tags');
 const utilitiesHidden = document.getElementById('utilities-json');
@@ -1019,6 +1042,5 @@ axios.get(`/api/property/${propertyId}`,{
     console.error(err);
     alert('Failed to load property data.');
 });
-
 </script>
 @endsection
