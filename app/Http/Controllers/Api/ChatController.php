@@ -72,6 +72,7 @@ class ChatController extends Controller
     public function showChatPage()
     {
         $authId = Auth::id();
+        $role = Auth::user()->role;
 
         $partnerIds = Chat::where('sender_id', $authId)
             ->orWhere('receiver_id', $authId)
@@ -82,16 +83,23 @@ class ChatController extends Controller
 
         $users = User::whereIn('id', $partnerIds)->get();
 
-        return view('chat.chat', [
+        if($role === 'admin') {
+            return view('chat.admin_chat', [
+                'users'        => $users,
+                'selectedUser' => null,
+                'messages'     => collect(),
+            ]);
+        }
+        if($role === 'member') {
+            return view('chat.member_chat', [
             'users'        => $users,
             'selectedUser' => null,
             'messages'     => collect(),
         ]);
+        }
     }
 
-    /**
-     * UI: Open a conversation with selected user.
-     */
+
     public function openChat($userId)
     {
         $authId = Auth::id();
