@@ -4,12 +4,13 @@ use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\FeedbackController;
 use App\Http\Controllers\api\NotificationController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Middleware\CheckTokenExpiration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\PropertyAdController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum',CheckTokenExpiration::class])->group(function () {
 
     Route::apiResource('property', PropertyAdController::class);
     Route::get('property/member/{id}',[PropertyAdController::class,'member_property'])->name('member.properties');
