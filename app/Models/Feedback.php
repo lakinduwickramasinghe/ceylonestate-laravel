@@ -12,6 +12,12 @@ class Feedback extends Model
     protected $connection = 'mongodb'; 
     protected $collection = 'feedback';
 
+    
+    // Query Scopes
+    public function scopeActive($query){
+        return $query->where('status','active');
+    }
+
     protected $fillable = [
         'userid',
         'rating',

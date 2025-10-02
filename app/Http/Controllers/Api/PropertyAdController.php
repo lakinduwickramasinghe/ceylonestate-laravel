@@ -13,7 +13,8 @@ class PropertyAdController extends Controller
 {
     public function index()
     {
-        $ads = PropertyAd::with(['residential', 'commercial', 'land', 'industrial', 'user', 'images'])
+        $ads = PropertyAd::active()
+            ->withRelations()
             ->latest()
             ->paginate(10);
 
@@ -130,7 +131,8 @@ class PropertyAdController extends Controller
 
     public function show(string $id)
     {
-        $ad = PropertyAd::with(['user','residential','commercial','land','industrial','images'])
+        $ad = PropertyAd::active()
+            ->withRelations()
             ->find($id);
 
         if (!$ad) {
@@ -143,13 +145,9 @@ class PropertyAdController extends Controller
 
     public function update(Request $request, $id)
     {
-        $property = PropertyAd::with([
-            'residential',
-            'commercial',
-            'industrial',
-            'land',
-            'images'
-        ])->findOrFail($id);
+        $property = PropertyAd::active()
+        ->withRelations()
+        ->findOrFail($id);
 
         // Validate
         $validator = Validator::make($request->all(), [
@@ -276,7 +274,9 @@ class PropertyAdController extends Controller
 
     public function destroy($id)
     {
-        $property = PropertyAd::with(['residential','commercial','industrial','land'])->findOrFail($id);
+        $property = PropertyAd::active()
+        ->withRelations()
+        ->findOrFail($id);
 
         // Delete related type-specific record
         if ($property->residential) {
@@ -302,12 +302,8 @@ class PropertyAdController extends Controller
 
     public function member_property($id)
     {
-        $ads = PropertyAd::with([
-                'residential',
-                'commercial',
-                'land',
-                'industrial'
-            ])
+        $ads = PropertyAd::active()
+            ->withRelations()
             ->where('user_id', $id)
             ->latest()
             ->get();
@@ -323,7 +319,8 @@ class PropertyAdController extends Controller
 
     public function all()
     {
-        $ads = PropertyAd::with(['residential', 'commercial', 'land', 'industrial', 'user', 'images'])
+        $ads = PropertyAd::active()
+            ->withRelations()
             ->latest()
             ->paginate(10);
 
@@ -331,7 +328,8 @@ class PropertyAdController extends Controller
     }
     public function viewone(string $id)
     {
-        $ad = PropertyAd::with(['user','residential','commercial','land','industrial','images'])
+        $ad = PropertyAd::active()
+            ->withRelations()
             ->find($id);
 
         if (!$ad) {

@@ -13,8 +13,16 @@ class PropertyAd extends Model
         'address_line_1','address_line_2','city','province','postal_code',
         'latitude','longitude','user_id' ];
 
-    // Eloquent Relationships
+    // Query Scopes
+    public function scopeActive($query){
+        return $query->where('status','available');
+    }
+    public function scopeWithRelations($query){
+        return $query->with(['residential', 'commercial', 'land', 'industrial', 'user', 'images']);
+    }
 
+    
+    // Eloquent Relationships
     public function user(){
         return $this->belongsTo(User::class,'user_id','id');
     }

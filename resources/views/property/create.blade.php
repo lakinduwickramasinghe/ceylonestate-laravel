@@ -1,5 +1,5 @@
 @extends('layouts.member')
-@section('title','Create Property Ad - Admin Panel')
+@section('title','Create Property Ad - Member Dashboard')
 @section('content')
 
 <!-- JS Panel for initial selection -->
