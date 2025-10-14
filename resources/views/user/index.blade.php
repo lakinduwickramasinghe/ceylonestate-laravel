@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const paginationDiv = document.getElementById('pagination');
 
     function fetchUsers(page = 1) {
-        axios.get(`/api/user`,{
+        axios.get(`/api/users`,{
             headers: {
             Authorization: `Bearer {{ session('auth_token') }}`}
         })

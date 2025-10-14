@@ -84,7 +84,7 @@
 
             try {
                 const userid = {{ auth()->id() }};
-                await axios.post('/api/feedback', { rating, message, userid }, {
+                await axios.post('/api/feedback', { rating, message}, {
                     headers: {
                         Authorization: `Bearer {{ session('auth_token') }}`,
                         'Content-Type': 'application/json'

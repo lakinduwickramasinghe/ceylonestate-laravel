@@ -177,12 +177,6 @@
             </div>
         </a>
 
-        <a href="">
-            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                <i class="fas fa-credit-card text-gray-500 mr-3"></i> Payments
-            </div>
-        </a>
-
         <!-- Logout Button -->
         <a href="{{ route('logout') }}" 
            onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 

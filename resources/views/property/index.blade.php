@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userId = {{ Auth::id() }}; // Logged-in user ID
 
     function fetchMemberProperties(page = 1) {
-        axios.get(`/api/property/member/${userId}?page=${page}`,{
+        axios.get(`/api/properties/member/${userId}?page=${page}`,{
             headers: {
                 Authorization: `Bearer {{ session('auth_token') }}`
             }

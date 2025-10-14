@@ -32,27 +32,33 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function fetchFeedbackWithUser() {
         try {
             // 1. Get feedback
-            const feedbackRes = await axios.get(`/api/feedback/${feedbackId}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-            const feedback = feedbackRes.data;
+            const feedbackRes = await axios.get(`/api/feedback/${feedbackId}`, {
+                headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+            });
 
-            // 2. Get user
-            const userRes = await axios.get(`/api/user/${feedback.userid}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-            const user = userRes.data;
+            const feedback = feedbackRes.data.data; // <- important
+
+            // 2. Get user if available
+            let user = { first_name: 'Anonymous', last_name: '', email: '', profile_photo_path: '', profile_photo_url: '' };
+            if (feedback.userid) {
+                try {
+                    const userRes = await axios.get(`/api/users/${feedback.userid}`, {
+                        headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+                    });
+                    user = userRes.data.data || userRes.data;
+                } catch (err) {
+                    console.error('Failed to fetch user info:', err);
+                }
+            }
 
             // 3. Determine profile image
             let profileImage = '';
             if (user.profile_photo_path) {
                 profileImage = `/storage/${user.profile_photo_path}`;
+            } else if (user.profile_photo_url) {
+                profileImage = user.profile_photo_url;
             } else {
-                profileImage = user.profile_photo_url 
-                    ? user.profile_photo_url 
-                    : "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.first_name + " " + user.last_name);
+                profileImage = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.first_name + " " + user.last_name);
             }
 
             // 4. Render details
@@ -98,18 +104,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     deleteBtn.addEventListener('click', function () {
         if (!confirm('Are you sure you want to delete this feedback?')) return;
 
-        axios.delete(`/api/feedback/${feedbackId}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
+        axios.delete(`/api/feedback/${feedbackId}`, {
+            headers: { Authorization: `Bearer {{ session('auth_token') }}` }
         })
-            .then(() => {
-                alert('Feedback deleted successfully.');
-                window.location.href = '/admin/feedback';
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Failed to delete feedback.');
-            });
+        .then(() => {
+            alert('Feedback deleted successfully.');
+            window.location.href = '/admin/feedback';
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Failed to delete feedback.');
+        });
     });
 });
 </script>

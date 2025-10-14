@@ -66,6 +66,8 @@ Route::middleware(['role:admin'])->group(function () {
     
     Route::get('admin/user',[UserController::class,'index'])->name('admin.user.index');
     Route::get('admin/user/{id}',[UserController::class,'show'])->name('admin.user.show');
+    Route::get('admin/user/create/admin',[UserController::class,'createAdmin'])->name('admin.user.create');
+    Route::post('admin/user/store',[UserController::class,'store'])->name('admin.user.store');
 
     Route::get('admin/feedback', [FeedbackController::class, 'admin_index'])->name('admin.feedback.index');
     Route::get('admin/feedback/{id}', [FeedbackController::class, 'admin_view'])->name('admin.feedback.view');

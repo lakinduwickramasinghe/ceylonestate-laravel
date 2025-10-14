@@ -1,37 +1,41 @@
 <?php
 
-use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Middleware\CheckTokenExpiration;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\PropertyAdController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Api\PropertyAdController;
+Route::middleware('auth:sanctum')->group(function () {
+    // Special routes first
+    Route::get('properties/member/{id}', [PropertyAdController::class,'member_property'])->name('properties.member');
 
-Route::middleware(['auth:sanctum',CheckTokenExpiration::class])->group(function () {
+    // Resource routes
+    Route::apiResource('properties', PropertyAdController::class);
 
-    Route::apiResource('property', PropertyAdController::class);
-    Route::get('property/member/{id}',[PropertyAdController::class,'member_property'])->name('member.properties');
-    Route::post('/property/create', [PropertyAdController::class, 'store']);
+    // Users
+    Route::apiResource('users', UserController::class);
+    Route::get('users/{id}', [UserController::class, 'info'])->name('users.info');
 
-    Route::apiResource('user', UserController::class);
+    // Dashboard
+    Route::apiResource('dashboard', DashboardController::class);
+    Route::get('dashboard/member/{id}', [DashboardController::class, 'member'])->name('dashboard.member');
 
-    Route::apiResource('feedback', FeedbackController::class);
 
-    Route::get('user/{id}', [UserController::class, 'info'])->name('user.info');
+    // Feedback
+    Route::apiResource('feedback', FeedbackController::class)->except(['index']);
+    Route::get('feedback/member/{id}', [FeedbackController::class, 'member'])->name('feedback.member');
 
-    Route::get('feedback/member/{id}', [FeedbackController::class, 'member']);
 
-    Route::apiResource('notification', NotificationController::class)->only(['store', 'show', 'destroy']);
-    Route::get('notification/user/{userId}', [NotificationController::class, 'index']);
-    Route::patch('/notification/{id}/read', [NotificationController::class, 'markAsRead']);
-    Route::patch('/notifications/{userId}/mark-all-read', [NotificationController::class, 'markAllAsRead']);
-    
+    // Notifications
+    Route::apiResource('notifications', NotificationController::class)->only(['store','show','destroy']);
+    Route::get('notification/user/{userId}', [NotificationController::class, 'index'])->name('notifications.user');
+    Route::patch('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::patch('notifications/{userId}/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
 });
 
-
-Route::get('/properties',[PropertyAdController::class,'all']);
-Route::get('/properties/{id}',[PropertyAdController::class,'viewone']);
-
+// Optional: view one property outside middleware if needed
+Route::get('properties/{id}', [PropertyAdController::class, 'viewone'])->name('properties.viewone');
+Route::get('properties/all', [PropertyAdController::class, 'all'])->name('properties.all');
+Route::get('feedback', [FeedbackController::class, 'index'])->name('feedback.index');

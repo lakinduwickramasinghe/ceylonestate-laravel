@@ -59,7 +59,7 @@ class PropertyAdController extends Controller
             // 1. Create main property ad
             $property = PropertyAd::create(array_merge(
                 $data,
-                ['user_id' => $request->user()->id ?? Auth::id()] // Replace 1 with Auth::id() in production
+                ['user_id' => $request->user()->id ?? Auth::id()] 
             ));
 
             // 2. Create related property type record

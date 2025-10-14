@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const tableBody = document.getElementById('feedbacks-body');
 
     async function fetchUserName(userId) {
+        if (!userId) return 'Anonymous';
         try {
-            const res = await axios.get(`/api/user/${userId}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-            const user = res.data;
+            const res = await axios.get(`/api/users/${userId}`,{
+                headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+            });
+            const user = res.data.data || res.data; // adapt in case API wraps data
             return `${user.first_name} ${user.last_name}`;
         } catch (err) {
             console.error(err);
@@ -52,20 +52,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchFeedbacks() {
         try {
-            const response = await axios.get('/api/feedback',{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-            const data = response.data;
+            const response = await axios.get('/api/feedback', {
+                headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+            });
+            const feedbacks = response.data.data; // <- fixed
+
             tableBody.innerHTML = '';
 
-            if (data.length === 0) {
+            if (!feedbacks || feedbacks.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No feedbacks found.</td></tr>`;
                 return;
             }
 
-            for (let i = 0; i < data.length; i++) {
-                const feedback = data[i];
+            for (let i = 0; i < feedbacks.length; i++) {
+                const feedback = feedbacks[i];
                 const userName = await fetchUserName(feedback.userid);
                 const truncatedMessage = truncateMessage(feedback.message, 50);
 
@@ -96,18 +96,16 @@ function deleteFeedback(id) {
     if (!confirm('Are you sure you want to delete this feedback?')) return;
 
     axios.delete(`/api/feedback/${id}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        })
-        .then(() => {
-            alert('Feedback deleted successfully.');
-            // location.reload();
-            window.location.href = '/admin/feedback';
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Failed to delete feedback.');
-        });
+        headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+    })
+    .then(() => {
+        alert('Feedback deleted successfully.');
+        window.location.href = '/admin/feedback';
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Failed to delete feedback.');
+    });
 }
 </script>
 @endsection

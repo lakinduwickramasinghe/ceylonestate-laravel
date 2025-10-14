@@ -35,7 +35,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::withCount(['propertyAds', 'payments'])
+        $user = User::withCount(['propertyAds'])
             ->select('id', 'username', 'first_name', 'last_name', 'email', 'role', 'profile_photo_path', 'created_at')
             ->find($id);
 

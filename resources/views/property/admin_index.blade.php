@@ -36,55 +36,60 @@ document.addEventListener('DOMContentLoaded', function () {
     const paginationDiv = document.getElementById('pagination');
 
     function fetchProperties(page = 1) {
-        axios.get(`/api/property?page=${page}`,{
+        axios.get(`/api/properties?page=${page}`, {
             headers: {
                 Authorization: `Bearer {{ session('auth_token') }}`
             }
         })
-            .then(response => {
-                const data = response.data.data;
-                tableBody.innerHTML = '';
+        .then(response => {
+            const data = response.data.data; // paginated array
+            tableBody.innerHTML = '';
 
-                if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No property ads found.</td></tr>`;
-                    paginationDiv.innerHTML = '';
-                    return;
-                }
-
-                data.forEach(property => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.id}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.title}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.status.charAt(0).toUpperCase() + property.status.slice(1)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${new Date(property.created_at).toLocaleDateString()}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                            <a href="/admin/property/${property.id}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
-                            <button onclick="deleteProperty(${property.id}, '${property.title.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-                // Pagination
-                const links = response.data.links;
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No property ads found.</td></tr>`;
                 paginationDiv.innerHTML = '';
+                return;
+            }
+
+            data.forEach(property => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.title}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.property_type?.charAt(0).toUpperCase() + property.property_type?.slice(1) || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${property.status?.charAt(0).toUpperCase() + property.status?.slice(1) || ''}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${new Date(property.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                        <a href="/admin/property/${property.id}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
+                        <button onclick="deleteProperty(${property.id}, '${property.title.replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Pagination
+            const links = response.data.links;
+            paginationDiv.innerHTML = '';
+            if (links) {
                 links.forEach(link => {
                     if (link.url) {
                         const btn = document.createElement('button');
                         btn.innerHTML = link.label.replace('&laquo;', '«').replace('&raquo;', '»');
                         btn.className = `px-3 py-1 mx-1 rounded ${link.active ? 'bg-[#1b5d38] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
-                        btn.addEventListener('click', () => fetchProperties(link.label === 'Previous' || link.label === '«' ? link.url.split('page=')[1] - 1 : link.label === 'Next' || link.label === '»' ? parseInt(link.url.split('page=')[1]) : link.url.split('page=')[1]));
+                        btn.addEventListener('click', () => {
+                            const urlParams = new URLSearchParams(link.url.split('?')[1]);
+                            const nextPage = urlParams.get('page') || 1;
+                            fetchProperties(nextPage);
+                        });
                         paginationDiv.appendChild(btn);
                     }
                 });
-
-            })
-            .catch(error => {
-                console.error(error);
-                tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Failed to load properties.</td></tr>`;
-            });
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Failed to load properties.</td></tr>`;
+        });
     }
 
     fetchProperties();
@@ -93,58 +98,20 @@ document.addEventListener('DOMContentLoaded', function () {
 function deleteProperty(id, title) {
     if (!confirm('Are you sure you want to delete this property?')) return;
 
-    // Fetch property details to get the owner's user_id
-    axios.get(`/api/property/${id}`, {
+    // Delete property
+    axios.delete(`/api/properties/${id}`, {
         headers: {
             Authorization: `Bearer {{ session('auth_token') }}`
         }
     })
-        .then(response => {
-            const property = response.data;
-
-            // Proceed with deletion
-            axios.delete(`/api/property/${id}`, {
-                headers: {
-                    Authorization: `Bearer {{ session('auth_token') }}`
-                }
-            })
-                .then(() => {
-                    // Create a notification for the property owner
-                    try {
-                        const newNotification = {
-                            user_id: property.user_id,
-                            title: `Your Property "${title}" has been deleted`,
-                            content: `Your property "${title}" has been removed from the system by an administrator of the platform.`,
-                            type: 'property',
-                            ref: String(id)
-                        };
-                        axios.post('/api/notification', newNotification, {
-                            headers: {
-                                Authorization: `Bearer {{ session('auth_token') }}`,
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(() => {
-                            console.log('Notification created successfully');
-                        })
-                        .catch(err => {
-                            console.error('Failed to create notification:', err.response?.data || err);
-                        });
-                    } catch (err) {
-                        console.error('Failed to create notification:', err.response?.data || err);
-                    }
-                    alert('Property deleted successfully.');
-                    location.reload();
-                })
-                .catch(err => {
-                    console.error('Failed to delete property:', err);
-                    alert('Failed to delete property.');
-                });
-        })
-        .catch(err => {
-            console.error('Failed to fetch property details:', err);
-            alert('Failed to fetch property details for deletion.');
-        });
+    .then(() => {
+        alert('Property deleted successfully.');
+        location.reload();
+    })
+    .catch(err => {
+        console.error('Failed to delete property:', err);
+        alert('Failed to delete property.');
+    });
 }
 </script>
 @endsection

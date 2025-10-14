@@ -71,9 +71,14 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-2">What Our Clients Say</h2>
             <p class="text-gray-600 mb-4">Real experiences from our happy clients across Sri Lanka.</p>
             <!-- Create Review Button -->
-            <a href="{{route('feedback.create')}}" class="bg-[#1b5d38] hover:bg-[#154526] text-white px-6 py-2 rounded-lg shadow-md transition inline-block mb-6">
-                Create Review
-            </a>
+            @php
+                if(Auth()->user()){
+                    echo '<a href="'.route('feedback.create').'" class="bg-[#1b5d38] hover:bg-[#154526] text-white px-6 py-2 rounded-lg shadow-md transition inline-block mb-6">
+                        Create Review
+                    </a>';
+                }
+            @endphp
+
         </div>
         
         <div id="feedback-container" class="overflow-hidden relative max-w-6xl mx-auto px-6 pb-12">
@@ -83,69 +88,73 @@
         </div>
     </section>
 
-    <script>
-        const slider = document.getElementById('feedback-slider');
-        let scrollAmount = 0;
+<script>
+    const slider = document.getElementById('feedback-slider');
+    let scrollAmount = 0;
 
-        function autoSlide() {
-            const slideStep = 360; // card width + spacing
-            scrollAmount += slideStep;
-            if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
-                scrollAmount = 0;
-            }
-            slider.style.transform = `translateX(-${scrollAmount}px)`;
+    function autoSlide() {
+        const slideStep = 360; // card width + spacing
+        scrollAmount += slideStep;
+        if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
+            scrollAmount = 0;
         }
+        slider.style.transform = `translateX(-${scrollAmount}px)`;
+    }
 
-        setInterval(autoSlide, 3500);
+    setInterval(autoSlide, 3500);
 
-        async function loadFeedbacks() {
-            try {
-                const feedbackRes = await axios.get('/api/feedback',{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-                const feedbacks = feedbackRes.data;
+    async function loadFeedbacks() {
+        try {
+            const feedbackRes = await axios.get('/api/feedback', {
+                headers: { Authorization: `Bearer {{ session('auth_token') }}` }
+            });
 
-                const feedbackContainer = document.getElementById('feedback-slider');
-                feedbackContainer.innerHTML = '';
+            const feedbacks = feedbackRes.data.data; // feedbacks from MongoDB
+            const feedbackContainer = document.getElementById('feedback-slider');
+            feedbackContainer.innerHTML = '';
 
-                for (const fb of feedbacks) {
-                    const userRes = await axios.get(`/api/user/${fb.userid}`,{
-            headers: {
-            Authorization: `Bearer {{ session('auth_token') }}`}
-        });
-                    const user = userRes.data;
+            for (const fb of feedbacks) {
+                const user = fb.user; // user from MySQL
 
-                    const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
-
-                    const profileImage = user.profile_photo_path 
-                        ? `{{ asset('storage') }}/${user.profile_photo_path}`
-                        : user.profile_photo_url;
-
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-xl border-t-4 border-blue-500 shadow-lg p-6 min-w-[340px] hover:shadow-2xl transition relative flex-shrink-0';
-                    card.innerHTML = `
-                        <svg class="absolute top-4 right-4 w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M7 17h3V7H5v7h2v3zm9 0h3V7h-5v7h2v3z"/>
-                        </svg>
-                        <div class="flex items-center mb-4">
-                            <img src="${profileImage}" alt="Profile" class="w-12 h-12 rounded-full mr-4 object-cover">
-                            <div class="text-left">
-                                <h3 class="text-lg font-semibold text-gray-900">${user.first_name} ${user.last_name}</h3>
-                                <div class="flex text-yellow-400">${stars}</div>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 text-sm leading-relaxed">"${fb.message}"</p>
-                    `;
-                    feedbackContainer.appendChild(card);
+                // Determine profile image like your snippet
+                let profileImage = 'default-avatar.png';
+                if (user) {
+                    if (user.profile_photo_path) {
+                        profileImage = `{{ asset('storage') }}/${user.profile_photo_path}`;
+                    } else if (user.profile_photo_url) {
+                        profileImage = user.profile_photo_url;
+                    }
                 }
-            } catch (err) {
-                console.error('Error loading feedbacks:', err);
-            }
-        }
 
-        loadFeedbacks();
-    </script>
+                const stars = '★'.repeat(fb.rating) + '☆'.repeat(5 - fb.rating);
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl border-t-4 border-blue-500 shadow-lg p-6 min-w-[340px] hover:shadow-2xl transition relative flex-shrink-0';
+                card.innerHTML = `
+                    <svg class="absolute top-4 right-4 w-8 h-8 text-blue-200" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 17h3V7H5v7h2v3zm9 0h3V7h-5v7h2v3z"/>
+                    </svg>
+                    <div class="flex items-center mb-4">
+                        <img src="${profileImage}" alt="Profile" class="w-12 h-12 rounded-full mr-4 object-cover">
+                        <div class="text-left">
+                            <h3 class="text-lg font-semibold text-gray-900">${user ? user.first_name + ' ' + user.last_name : 'Anonymous'}</h3>
+                            <div class="flex text-yellow-400">${stars}</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">"${fb.message}"</p>
+                `;
+                feedbackContainer.appendChild(card);
+            }
+
+        } catch (err) {
+            console.error('Error loading feedbacks:', err);
+        }
+    }
+
+    loadFeedbacks();
+</script>
+
+
 
     @include('layouts.footer');
 

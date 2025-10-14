@@ -131,12 +131,7 @@
                 <i class="fas fa-comments text-gray-500 mr-3"></i> Chat
             </div>
         </a>
-        <!-- My Payments -->
-        <a href="">
-            <div class="sidebar-item px-5 py-3 flex items-center text-gray-700 cursor-pointer border-b border-gray-100">
-                <i class="fas fa-credit-card text-gray-500 mr-3"></i> My Payments
-            </div>
-        </a>
+
         <!-- Logout -->
         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="mt-auto px-5 py-3 flex items-center text-red-600 hover:bg-red-100 cursor-pointer border-t border-red-300">
             <i class="fas fa-sign-out-alt text-red-600 mr-3"></i>
