@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function deleteUser(id) {
     if (!confirm('Are you sure you want to delete this user?')) return;
 
-    axios.delete(`/api/user/${id}`,{
+    axios.delete(`/api/users/${id}`,{
             headers: {
             Authorization: `Bearer {{ session('auth_token') }}`}
         })
